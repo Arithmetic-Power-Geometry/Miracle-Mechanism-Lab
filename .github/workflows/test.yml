@@ -21,7 +21,9 @@ jobs:
         run: python -m scripts.audit_dataset
       - name: Constraint inversion
         run: python -m scripts.run_inversion
-      - name: Mechanism clustering\n        run: python -m scripts.analyze_mechanism_clusters\n      - name: Upload audit artifacts
+      - name: Mechanism clustering
+        run: python -m scripts.analyze_mechanism_clusters
+      - name: Upload audit artifacts
         uses: actions/upload-artifact@v4
         if: always()
         with:
