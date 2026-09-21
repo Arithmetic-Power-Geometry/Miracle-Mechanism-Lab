@@ -43,6 +43,8 @@ st.markdown("""
 .origin,.destination{position:absolute;bottom:70px;font:700 12px ui-monospace;color:#86efac;border:1px solid #166534;padding:5px 9px;border-radius:6px}.origin{left:10%}.destination{right:10%}
 .emerge{animation:emerge 2.1s ease-in-out infinite}.teleport{animation:teleport 2.8s steps(1,end) infinite}.travel{animation:travel 3.5s ease-in-out infinite}.ascend{animation:ascend 2.6s ease-in-out infinite}.shrink{animation:shrink 2.8s ease-in-out infinite}.grow{animation:grow 2.8s ease-in-out infinite}.float{animation:floaty 2.1s ease-in-out infinite}.fade{animation:fade 2.8s ease-in-out infinite}.duplicate{animation:duplicate 2.8s ease-in-out infinite}.signal{animation:signal 1.7s ease-in-out infinite}.pulse{animation:pulse 1.5s ease-in-out infinite}
 @keyframes emerge{0%,25%{opacity:0;transform:scale(.05) rotate(-30deg)}60%,100%{opacity:1;transform:scale(1) rotate(0)}}@keyframes teleport{0%,42%{transform:translateX(-260px);opacity:1}43%,55%{opacity:0}56%,100%{transform:translateX(260px);opacity:1}}@keyframes travel{0%{transform:translateX(-260px)}50%{opacity:.1}100%{transform:translateX(260px)}}@keyframes ascend{0%,100%{transform:translateY(70px)}50%{transform:translateY(-80px)}}@keyframes shrink{0%,100%{transform:scale(1)}50%{transform:scale(.16)}}@keyframes grow{0%,100%{transform:scale(.35)}50%{transform:scale(1.55)}}@keyframes fade{0%,100%{opacity:1}50%{opacity:.05;filter:blur(5px)}}@keyframes duplicate{0%,100%{text-shadow:0 0 transparent}50%{text-shadow:-80px 0 0 rgba(255,255,255,.75),80px 0 0 rgba(255,255,255,.75)}}@keyframes signal{0%,100%{filter:drop-shadow(0 0 5px #38bdf8)}50%{filter:drop-shadow(0 0 40px #38bdf8);transform:scale(1.15)}}@keyframes pulse{0%,100%{transform:scale(.9);opacity:.65}50%{transform:scale(1.15);opacity:1}}
+.toolbelt{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0 18px}.toolchip{background:#07110d;border:1px solid #244b39;border-radius:8px;padding:9px;text-align:center;color:#9fffc8;font:700 11px ui-monospace}.missionbar{height:7px;background:#10241a;border-radius:9px;overflow:hidden}.missionbar>div{height:100%;background:linear-gradient(90deg,#22c55e,#86efac);box-shadow:0 0 12px #22c55e}.coord{position:absolute;color:#86efac;font:10px ui-monospace;opacity:.75}.c1{left:18px;top:88px}.c2{right:18px;top:88px}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -174,13 +176,32 @@ def scene_animation(cap,scenario,phase="experiment"):
     st.markdown(f"""
     <div class="game-scene stage">
       <div class="hud"><div class="hudline"><span><span class="statusdot"></span>LIVE SCENE</span><span>{arena}</span></div></div>
-      <div class="stage-grid"></div>
+      <div class="stage-grid"></div><div class="coord c1">CAM-01 · LOCK</div><div class="coord c2">SENSOR BUS · LIVE</div>
       <div class="origin">A</div><div class="destination">B</div>
       <div class="actor {klass}">{icon}</div>
       <div class="game-caption">{title}</div>
       <div class="game-sub">{sub}</div>
       <div class="objective"><b>SCENE:</b> {scenario}</div>
     </div>""",unsafe_allow_html=True)
+
+TOOLS={
+"local_emergence":["⚖️ MASS","📷 CAMERA","🌡️ THERMAL","🔒 SEAL","🧾 INVENTORY"],
+"instant_relocation":["📍 TRACK","⏱️ CLOCK","📷 CAMERA","🪪 ID","📡 RANGE"],
+"gap_travel":["🗺️ MAP","📍 TRACK","⏱️ CLOCK","📷 CAMERA","🪪 ID"],
+"unsupported_ascent":["⚖️ FORCE","🌬️ AIR","🧲 FIELD","📷 CAMERA","📏 RANGE"],
+"microform":["📏 SCALE","⚖️ MASS","📷 CAMERA","🪪 ID","🔬 OPTICS"],
+"macroform":["📏 SCALE","⚖️ MASS","📷 CAMERA","🪪 ID","🔬 OPTICS"],
+"lightform":["⚖️ FORCE","📏 RANGE","📷 CAMERA","🌬️ AIR","🧲 FIELD"],
+"observer_dropout":["📷 OPTICAL","🌡️ THERMAL","📡 RANGE","🎙️ AUDIO","⏱️ SYNC"],
+"multi_instance":["🪪 ID","⏱️ SYNC","📍 TRACK","📷 CAMERA","🧾 PROVENANCE"],
+"dual_presence":["🪪 ID","⏱️ SYNC","📍 SITE A","📍 SITE B","🧾 PROVENANCE"],
+"remote_sensing":["🎲 TARGET","🔒 BLIND","📡 CHANNEL","⏱️ CLOCK","🧾 LOG"],
+"future_sensing":["🎲 RNG","🔒 COMMIT","⏱️ CLOCK","🧾 LOG","📡 AUDIT"],
+"remote_acquisition":["🎯 TARGET","🔒 BLIND","📡 AUDIT","⏱️ CLOCK","🧾 LOG"],
+"accelerated_recovery":["📈 ENDPOINT","⏱️ TIME","👥 CONTROL","🧾 LOG","📊 CURVE"],
+}
+def toolbelt(cap):
+    st.markdown('<div class="toolbelt">'+''.join(f'<div class="toolchip">{x}</div>' for x in TOOLS[cap])+'</div>',unsafe_allow_html=True)
 
 if st.session_state.screen=="briefing":
     st.markdown("## 01 // MISSION BRIEFING")
@@ -204,6 +225,14 @@ elif st.session_state.screen=="experiment":
     with top2:
         st.markdown(f"## 02 // {VISUALS[cap][1]} · {spec.code}")
     scene_animation(cap,scenario)
+    toolbelt(cap)
+    st.markdown("### OPERATOR MOVEMENT / CAMERA")
+    mv1,mv2,mv3=st.columns(3)
+    camera_x=mv1.slider("Strafe ◀ ▶",-100,100,0,5,help="Moves the operator viewpoint marker for exploration; it does not change the scientific model.")
+    camera_y=mv2.slider("Forward / back",-100,100,0,5)
+    zoom=mv3.slider("Optical zoom",1.0,4.0,1.0,0.1)
+    st.markdown(f'<div class="hud"><div class="hudline"><span>VIEW X {camera_x:+d} · Y {camera_y:+d}</span><span>ZOOM {zoom:.1f}×</span></div><div class="missionbar"><div style="width:66%"></div></div></div>',unsafe_allow_html=True)
+    st.caption("These controls provide game-style scene navigation. Mission parameters below are the values used by the simulation engine.")
     st.markdown("### INSTRUMENT PANEL")
     kwargs={}
     if cap in ("microform","macroform"):
@@ -241,6 +270,8 @@ elif st.session_state.screen=="results":
         st.session_state.screen="experiment"; st.rerun()
     st.markdown(f"## 03 // AFTER-ACTION ANALYSIS · {spec.code}")
     scene_animation(cap,scenario,"results")
+    toolbelt(cap)
+    st.markdown('<div class="hud"><div class="hudline"><span>OBJECTIVES COMPLETE</span><span>XP +100 · ANALYSIS UNLOCKED</span></div><div class="missionbar"><div style="width:100%"></div></div></div>',unsafe_allow_html=True)
     state=WorldState()
     result=AGENTS[spec.family].simulate(cap,state,**kwargs)
     delta={k:v for k,v in result.required_delta.items() if abs(v)>0}
