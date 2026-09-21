@@ -27,6 +27,15 @@ st.markdown("""
 @keyframes scan {0%{transform:translateY(0);opacity:.2}50%{transform:translateY(160px);opacity:1}100%{transform:translateY(0);opacity:.2}}
 @keyframes popin {0%{transform:scale(.2);opacity:0}65%{transform:scale(1.18);opacity:1}100%{transform:scale(1);opacity:1}}
 .pop {animation:popin 1s ease-out;}
+.hud {background:#07110d;border:1px solid #1f6f4a;border-radius:10px;color:#9fffc8;padding:12px 15px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;box-shadow:inset 0 0 22px rgba(34,197,94,.07);}
+.hudline {display:flex;justify-content:space-between;gap:10px;font-size:.78rem;letter-spacing:.06em;margin:3px 0;}
+.objective {border-left:3px solid #22c55e;padding:8px 12px;background:rgba(34,197,94,.06);margin:8px 0;}
+.reticle {width:92px;height:92px;border:1px solid rgba(147,197,253,.7);border-radius:50%;margin:12px auto;position:relative;box-shadow:0 0 24px rgba(59,130,246,.25);}
+.reticle:before,.reticle:after {content:"";position:absolute;background:rgba(147,197,253,.8);}
+.reticle:before {width:120px;height:1px;left:-15px;top:45px;}
+.reticle:after {width:1px;height:120px;left:45px;top:-15px;}
+.statusdot {display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e;margin-right:6px;}
+
 
 </style>
 """, unsafe_allow_html=True)
@@ -109,14 +118,37 @@ VISUALS={
 
 def render_game_scene(cap,scenario):
     icon,arena,title,sub=VISUALS[cap]
+    mission_id=f"ACS-{list(BY_NAME).index(cap)+1:02d}"
+    objective={
+      "local_emergence":"Secure chamber telemetry. Verify inventory. Exclude hidden source.",
+      "instant_relocation":"Lock source and destination. Track continuity. Authenticate object.",
+      "gap_travel":"Recover missing path segment from independent checkpoints.",
+      "unsupported_ascent":"Map all support forces before classifying the motion.",
+      "microform":"Calibrate geometry, mass and identity before and after transition.",
+      "macroform":"Calibrate geometry, mass and identity before and after transition.",
+      "lightform":"Measure force, acceleration and every candidate support channel.",
+      "observer_dropout":"Cross-check optical, thermal and independent sensor channels.",
+      "multi_instance":"Synchronize clocks and authenticate every reported instance.",
+      "dual_presence":"Authenticate both sites under synchronized continuous recording.",
+      "remote_sensing":"Seal information channels, randomize target and preserve blinding.",
+      "future_sensing":"Commit prediction before target generation and lock timestamps.",
+      "remote_acquisition":"Audit all access channels before testing the unexplained route.",
+      "accelerated_recovery":"Define endpoint and reference trajectory before comparison."
+    }[cap]
     st.markdown(f"""
     <div class="game-scene">
-      <div class="game-title">MISSION · {arena}</div>
+      <div class="hud">
+        <div class="hudline"><span><span class="statusdot"></span>FIELD SYSTEM ONLINE</span><span>{mission_id}</span></div>
+        <div class="hudline"><span>ZONE: {arena}</span><span>MODE: INVESTIGATION</span></div>
+      </div>
+      <div class="game-title" style="margin-top:14px;">MISSION · {arena}</div>
       <div class="scan"></div>
+      <div class="reticle"></div>
       <div class="game-object pop">{icon}</div>
       <div class="game-caption">{title}</div>
       <div class="game-sub">{sub}</div>
-      <div style="margin-top:18px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.07);font-size:.86rem;">🎯 {scenario}</div>
+      <div class="objective"><b>PRIMARY OBJECTIVE</b><br>{objective}</div>
+      <div style="margin-top:10px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.07);font-size:.86rem;">FIELD REPORT · {scenario}</div>
     </div>
     """,unsafe_allow_html=True)
 
@@ -204,11 +236,24 @@ with right:
         kwargs["delta_mass_kg"]=st.number_input("Local mass increase (kg)",min_value=0.0,value=float(st.session_state.get("param_delta_mass_kg",0.020)),format="%.6f")
     st.caption("Defaults come from the selected scenario. Every displayed value can be changed before running the simulation.")
 
+st.markdown("## FIELD OPERATIONS CONSOLE")
+h1,h2,h3,h4=st.columns(4)
+h1.metric("MISSION",spec.code)
+h2.metric("STATUS","READY")
+h3.metric("MODEL",spec.display_name)
+h4.metric("RISK","SIMULATION")
+st.markdown(f"""
+<div class="hud">
+<div class="hudline"><span>OPERATOR BRIEF</span><span>MODEL LOCK: {spec.code}</span></div>
+<div class="objective"><b>MISSION BRIEF:</b> {GUIDE[cap][0]}. Your job is not to accept the first explanation. Instrument the scene, run the model, inspect the rival explanation, then decide what measurement would separate them.</div>
+</div>
+""",unsafe_allow_html=True)
+
 st.markdown("### 🎮 Mission controls")
 mc1,mc2,mc3=st.columns(3)
-mc1.markdown("**1 · Choose**\n\nPick a scenario.")
-mc2.markdown("**2 · Tune**\n\nEdit the model and parameters.")
-mc3.markdown("**3 · Investigate**\n\nRun it, then challenge the explanation.")
+mc1.markdown("**LOADOUT 01 · MISSION**\n\nChoose the field scenario.")
+mc2.markdown("**LOADOUT 02 · INSTRUMENTS**\n\nTune editable model parameters.")
+mc3.markdown("**LOADOUT 03 · DEPLOY**\n\nRun, inspect, challenge the explanation.")
 
 if st.button("🚀 Launch investigation", type="primary", use_container_width=True):
     state=WorldState()
@@ -245,6 +290,8 @@ if st.button("🚀 Launch investigation", type="primary", use_container_width=Tr
     b.metric("Changed state variables", len(delta))
     c.metric("Ordinary mimic", spec.principal_mimic)
 
+    st.markdown("## AFTER-ACTION INTELLIGENCE")
+    st.markdown('<div class="hud"><div class="hudline"><span><span class="statusdot"></span>TELEMETRY CAPTURED</span><span>ANALYSIS UNLOCKED</span></div></div>',unsafe_allow_html=True)
     st.markdown("### 🧭 Investigation board")
     q1,q2,q3=st.columns(3)
     q1.markdown("**CLUE 1 — State**\n\nWhat changed in the modeled world?")
