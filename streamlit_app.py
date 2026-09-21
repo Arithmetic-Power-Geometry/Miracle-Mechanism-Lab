@@ -15,6 +15,13 @@ st.markdown("""
 [data-testid="stAppViewContainer"] {background:radial-gradient(circle at 50% 0%,#122235 0,#070d15 44%,#03070b 100%);}
 [data-testid="stHeader"] {background:transparent;}
 [data-testid="stMainBlockContainer"] {min-height:100vh;}
+html,body,[class*="css"] {color:#e5eef7;}
+h1,h2,h3,h4,p,span,label {color:inherit;}
+[data-testid="stMarkdownContainer"] p {color:#d7e2ee;}
+[data-testid="stMarkdownContainer"] h1,[data-testid="stMarkdownContainer"] h2,[data-testid="stMarkdownContainer"] h3 {color:#f4f8fc;}
+[data-testid="stDataFrame"] {background:#0b1520;border-radius:10px;}
+[data-testid="stExpander"] {background:#0b1520;border:1px solid #26384a;border-radius:10px;}
+
 
 .hero {padding: 1.2rem 1.4rem; border-radius: 18px; background: linear-gradient(135deg,#111827,#1f2937); color:white; margin-bottom:1rem;}
 .hero h1 {margin:0; font-size:2.1rem;}
@@ -58,7 +65,11 @@ if "screen" not in st.session_state:
 if "last_result" not in st.session_state:
     st.session_state.last_result=None
 
-st.markdown('<div class="hero"><h1>Anomalous Capability Simulator (ACS)</h1><p>A research-oriented interactive laboratory for turning unusual-event descriptions into explicit state-transition models, animated experiments, competing explanations, and discriminating tests.</p></div>', unsafe_allow_html=True)
+# Keep the full project masthead on the entry page; later stages use a compact HUD.
+if st.session_state.screen=="briefing":
+    st.markdown('<div class="hero"><h1>Anomalous Capability Simulator (ACS)</h1><p>A research-oriented interactive laboratory for turning unusual-event descriptions into explicit state-transition models, animated experiments, competing explanations, and discriminating tests.</p></div>', unsafe_allow_html=True)
+else:
+    st.markdown('<div class="hud"><div class="hudline"><span>ANOMALOUS CAPABILITY SIMULATOR · ACS</span><span>FIELD LAB</span></div></div>',unsafe_allow_html=True)
 
 GUIDE = {
 "microform":("Something becomes dramatically smaller","What variables must change if an object's effective size falls by a million-fold?"),
@@ -290,6 +301,7 @@ elif st.session_state.screen=="results":
         st.session_state.screen="experiment"; st.rerun()
 
     st.markdown(f"## 03 // EXPERIMENT REPORT · {spec.code}")
+    st.caption(f"{spec.display_name} · experiment-specific after-action report")
     st.markdown(f'<div class="hud"><div class="hudline"><span>REPORT LOCKED TO {spec.code}</span><span>{VISUALS[cap][1]}</span></div><div class="objective"><b>ANALYZED EVENT:</b> {scenario}<br><b>MODEL:</b> {spec.display_name}<br><b>VISUAL USED IN EXPERIMENT:</b> {VISUALS[cap][2]} — {VISUALS[cap][3]}</div></div>',unsafe_allow_html=True)
     state=WorldState()
     if cap=="accelerated_recovery":
@@ -344,13 +356,20 @@ elif st.session_state.screen=="results":
     mod=minimum_modification(cap,obs)
 
     st.markdown("### MISSION SUMMARY")
-    st.markdown(f"""**Scenario.** {scenario}
+    st.markdown(f"""
+**Scenario:** {scenario}
 
-**Model used.** {spec.display_name} ({spec.code}), family `{spec.family}`.
+**Selected model:** {spec.display_name} ({spec.code})  
+**Model family:** {spec.family.replace("_"," ").title()}  
+**Primary modeled quantity:** {spec.primary_variable.replace("_"," ")}  
+**Expected direction:** {spec.expected_direction}
 
-**What the software did.** {result.notes.get("claim_model","State transition model")}.
+**Simulation action:** {result.notes.get("claim_model","State transition model")}.
 
-**Interpretation boundary.** This report describes a synthetic state-transition experiment. It is not a record of a physical event and is not evidence that the modeled mechanism exists.""")
+**Research question:** What measurable state change would represent this scenario, what ordinary process could imitate it, and what observation would distinguish the two?
+
+**Interpretation boundary:** This is a synthetic state-transition experiment. It does not report a physical event and does not establish that the modeled mechanism exists.
+""")
 
     st.markdown("### INPUTS ACTUALLY USED")
     input_rows=[{"parameter":k,"value":v} for k,v in kwargs.items()]
