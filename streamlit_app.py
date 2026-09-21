@@ -11,7 +11,11 @@ st.set_page_config(page_title="Anomalous Capability Simulator", page_icon="🧪"
 
 st.markdown("""
 <style>
-.block-container {max-width: 1200px; padding-top: 1.5rem;}
+.block-container {max-width: 980px; padding-top: 1rem; padding-bottom:2rem;}
+[data-testid="stAppViewContainer"] {background:radial-gradient(circle at 50% 0%,#122235 0,#070d15 44%,#03070b 100%);}
+[data-testid="stHeader"] {background:transparent;}
+[data-testid="stMainBlockContainer"] {min-height:100vh;}
+
 .hero {padding: 1.2rem 1.4rem; border-radius: 18px; background: linear-gradient(135deg,#111827,#1f2937); color:white; margin-bottom:1rem;}
 .hero h1 {margin:0; font-size:2.1rem;}
 .hero p {opacity:.88; margin:.35rem 0 0 0;}
@@ -206,12 +210,13 @@ def toolbelt(cap):
 if st.session_state.screen=="briefing":
     st.markdown("## 01 // MISSION BRIEFING")
     st.markdown('<div class="hud"><div class="hudline"><span>SELECT FIELD EVENT</span><span>INPUT CONSOLE</span></div><div class="objective"><b>OBJECTIVE:</b> Choose what you want to investigate. The next screen becomes a dedicated experimental environment for that choice.</div></div>',unsafe_allow_html=True)
-    scenario_choice=st.selectbox("What are you curious about?",list(SCENARIOS),key="scenario_picker",on_change=apply_scenario)
-    scenario=st.text_input("Editable mission description",key="scenario_text")
-    selected_label=st.selectbox("Suggested model — editable",list(labels),key="capability_label")
+    st.markdown("### SELECT MISSION")
+    scenario_choice=st.selectbox("What are you curious about?",list(SCENARIOS),key="scenario_picker",on_change=apply_scenario,label_visibility="collapsed")
+    scenario=st.text_input("Mission description",key="scenario_text",placeholder="Describe the event you want to investigate...")
+    selected_label=st.selectbox("Model",list(labels),key="capability_label")
     cap=labels[selected_label]; spec=BY_NAME[cap]
+    st.markdown(f'<div class="hud"><div class="hudline"><span>MISSION {spec.code}</span><span>{VISUALS[cap][1]}</span></div><div class="objective"><b>OBJECTIVE:</b> {GUIDE[cap][0]}</div></div>',unsafe_allow_html=True)
     render_game_scene(cap,scenario)
-    st.markdown(f"**Mission objective:** {GUIDE[cap][0]}")
     if st.button("ENTER EXPERIMENT →",type="primary",use_container_width=True):
         st.session_state.screen="experiment"; st.rerun()
 
@@ -226,14 +231,7 @@ elif st.session_state.screen=="experiment":
         st.markdown(f"## 02 // {VISUALS[cap][1]} · {spec.code}")
     scene_animation(cap,scenario)
     toolbelt(cap)
-    st.markdown("### OPERATOR MOVEMENT / CAMERA")
-    mv1,mv2,mv3=st.columns(3)
-    camera_x=mv1.slider("Strafe ◀ ▶",-100,100,0,5,help="Moves the operator viewpoint marker for exploration; it does not change the scientific model.")
-    camera_y=mv2.slider("Forward / back",-100,100,0,5)
-    zoom=mv3.slider("Optical zoom",1.0,4.0,1.0,0.1)
-    st.markdown(f'<div class="hud"><div class="hudline"><span>VIEW X {camera_x:+d} · Y {camera_y:+d}</span><span>ZOOM {zoom:.1f}×</span></div><div class="missionbar"><div style="width:66%"></div></div></div>',unsafe_allow_html=True)
-    st.caption("These controls provide game-style scene navigation. Mission parameters below are the values used by the simulation engine.")
-    st.markdown("### INSTRUMENT PANEL")
+    st.markdown("### EXPERIMENT CONTROLS")
     kwargs={}
     if cap in ("microform","macroform"):
         default=1e-6 if cap=="microform" else 1e6
@@ -414,18 +412,18 @@ The simulator supplies a test architecture; it does not substitute for real meas
     st.warning("Interpretation: the software can simulate the requested hypothetical transition. It does not physically realize the event and does not establish that such a capability exists in nature.")
 
 
-st.markdown("---")
-st.markdown("## Project reference")
-r1,r2,r3=st.columns(3)
-r1.metric("Neutral capability models",len(CAPABILITIES))
-r2.metric("Model families",len(set(x.family for x in CAPABILITIES)))
-r3.metric("Benchmark design","4,200 synthetic rows")
-st.markdown("""
-The project separates four layers that are easy to confuse: **observation**, **model**, **constraint residual**, and **evidence**. A simulation can successfully reproduce an observation while providing zero evidence that the simulated mechanism occurs in nature.
-""")
+if st.session_state.screen=="results":
+    st.markdown("---")
+    st.markdown("## Project reference")
+    r1,r2,r3=st.columns(3)
+    r1.metric("Capability models",len(CAPABILITIES))
+    r2.metric("Model families",len(set(x.family for x in CAPABILITIES)))
+    r3.metric("Benchmark","4,200 rows")
+    st.markdown("The project separates **observation → model → residual → evidence**. A successful simulation is not empirical evidence.")
 
-with st.expander("How to read a result"):
-    st.markdown("""
+if st.session_state.screen=="results":
+  with st.expander("How to read a result"):
+      st.markdown("""
 **Changed state variables** = what the software altered.  
 **Known constraint** = an ordinary rule/accounting condition the scenario presses against.  
 **Ordinary mimic** = a conventional explanation capable of producing a similar observation.  
@@ -433,9 +431,11 @@ with st.expander("How to read a result"):
 **Normalized deviation** = a model-dependent comparison number, not a probability or a power score.
 """)
 
-with st.expander("🎮 Why the game-like interface?"):
+if st.session_state.screen=="results":
+  with st.expander("🎮 Why the game-like interface?"):
     st.write("The visual missions are an educational interface over the same deterministic research model. Animation, icons and mission language do not add evidence or change the calculations. The purpose is to make model comparison, controls and falsification easier to explore.")
 
-with st.expander("About this project"):
+if st.session_state.screen=="results":
+  with st.expander("About this project"):
     st.write("The simulator uses project-created neutral labels and studies hypothetical capability patterns as computational models.")
     st.write("Copyright (C) 2026 Mohammad Amir Khusru Akhtar · Apache License 2.0")
