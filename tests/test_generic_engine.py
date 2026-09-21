@@ -16,4 +16,18 @@ class TestGenericEngine(unittest.TestCase):
   with self.assertRaises(ValueError): execute("unsupported_motion",{"elapsed_time":0})
  def test_scale_volume_is_cubic(self):
   r=execute("scale_decrease",{"scale_ratio":.1}); self.assertAlmostEqual(r.outputs["volume_ratio"],.001)
+ def test_directional_domains(self):
+  for key,p in (("scale_decrease",{"scale_ratio":1}),("scale_increase",{"scale_ratio":.5}),
+                ("mass_response_decrease",{"response_ratio":1}),("mass_response_increase",{"response_ratio":.5})):
+   with self.assertRaises(ValueError): execute(key,p)
+ def test_discrete_counts_reject_fractional_values(self):
+  with self.assertRaises(ValueError): execute("multiple_instances",{"instance_count":2.7})
+  with self.assertRaises(ValueError): execute("detection_dropout",{"sensor_modalities":2.5})
+  with self.assertRaises(ValueError): execute("remote_information",{"target_space":1})
+ def test_audit_scores_are_probabilities(self):
+  for key,p in (("remote_acquisition",{"channel_audit":1.2}),("revival",{"independent_confirmation":-0.1}),
+                ("form_transformation",{"identity_audit":2}),("accelerated_recovery",{"baseline":-0.1})):
+   with self.assertRaises(ValueError): execute(key,p)
+ def test_controls_are_positive_integer(self):
+  with self.assertRaises(ValueError): execute("external_influence",{"controls":1.5})
 if __name__=="__main__": unittest.main()
