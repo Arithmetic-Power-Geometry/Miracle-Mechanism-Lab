@@ -17,16 +17,16 @@ class LayeredClaim:
     epistemic_note:str="historical/doctrinal description; not empirical confirmation"
 
 KNOWLEDGE_LAYERS=(
- LayeredClaim("Yoga/Samkhya","siddhi","extraordinary attainment",("altered embodiment","extraordinary knowing"),("prakriti transformation","samadhi/samyama"),("microform","macroform","lightform","remote_sensing","future_sensing")),
- LayeredClaim("Buddhist","iddhi/rddhi","extraordinary ability",("multiplicity","unusual locomotion","unusual perception"),("meditative accomplishment",),("multi_instance","unsupported_ascent","remote_sensing")),
- LayeredClaim("Buddhist","abhijna","higher knowledge",("remote perception","mind-related knowing","retrocognitive report"),("concentration/insight",),("remote_sensing",)),
- LayeredClaim("Tantric","siddhi","ritual/contemplative accomplishment",("extraordinary efficacy","altered agency"),("mantra/deity/ritual frameworks",),("remote_sensing","future_sensing","local_emergence","remote_acquisition")),
- LayeredClaim("Islamic devotional/hagiographic","karama/karamat","saintly marvel report",("unusual knowledge","unusual locomotion","unexpected provision or material event","unusual recovery"),("divine gift; not an independently controlled power",),("remote_sensing","future_sensing","gap_travel","instant_relocation","local_emergence","accelerated_recovery")),
- LayeredClaim("Jain contemplative","labdhi/rddhi","extraordinary attainment report",("unusual perception","altered embodiment","unusual locomotion"),("ascetic/contemplative accomplishment",),("remote_sensing","microform","macroform","unsupported_ascent")),
- LayeredClaim("Christian hagiographic","charism/miracle report","saintly or charismatic marvel report",("unusual healing","unusual knowledge","multiple-location report","material event"),("divine action/grace",),("accelerated_recovery","remote_sensing","dual_presence","local_emergence")),
- LayeredClaim("Jewish scriptural/rabbinic","miracle/wonder report","scriptural or hagiographic marvel report",("unusual material event","unusual locomotion","unusual recovery"),("divine action",),("local_emergence","gap_travel","accelerated_recovery")),
+ LayeredClaim("Yoga/Samkhya","siddhi","extraordinary attainment",("altered embodiment","extraordinary knowing"),("prakriti transformation","samadhi/samyama"),("scale_decrease","scale_increase","mass_response_decrease","remote_information","future_information")),
+ LayeredClaim("Buddhist","iddhi/rddhi","extraordinary ability",("multiplicity","unusual locomotion","unusual perception"),("meditative accomplishment",),("multiple_instances","unsupported_motion","remote_information")),
+ LayeredClaim("Buddhist","abhijna","higher knowledge",("remote perception","mind-related knowing","retrocognitive report"),("concentration/insight",),("remote_information",)),
+ LayeredClaim("Tantric","siddhi","ritual/contemplative accomplishment",("extraordinary efficacy","altered agency"),("mantra/deity/ritual frameworks",),("remote_information","future_information","local_emergence","remote_acquisition")),
+ LayeredClaim("Islamic devotional/hagiographic","karama/karamat","saintly marvel report",("unusual knowledge","unusual locomotion","unexpected provision or material event","unusual recovery"),("divine gift; not an independently controlled power",),("remote_information","future_information","path_discontinuity","path_discontinuity","local_emergence","accelerated_recovery")),
+ LayeredClaim("Jain contemplative","labdhi/rddhi","extraordinary attainment report",("unusual perception","altered embodiment","unusual locomotion"),("ascetic/contemplative accomplishment",),("remote_information","scale_decrease","scale_increase","unsupported_motion")),
+ LayeredClaim("Christian hagiographic","charism/miracle report","saintly or charismatic marvel report",("unusual healing","unusual knowledge","multiple-location report","material event"),("divine action/grace",),("accelerated_recovery","remote_information","multi_location_identity","local_emergence")),
+ LayeredClaim("Jewish scriptural/rabbinic","miracle/wonder report","scriptural or hagiographic marvel report",("unusual material event","unusual locomotion","unusual recovery"),("divine action",),("local_emergence","path_discontinuity","accelerated_recovery")),
  LayeredClaim("Comparative mysticism","mystical/noetic experience","transformative experience",("unity","noetic seeming","ineffability"),("theistic","nondual","naturalistic"),()),
- LayeredClaim("Anomalous reports","anomalous capability","reported anomaly",("unexpected information","unexpected motion","unexpected material change","unexpected detection loss"),("underdetermined",),("remote_sensing","future_sensing","instant_relocation","local_emergence","observer_dropout")),
+ LayeredClaim("Anomalous reports","anomalous capability","reported anomaly",("unexpected information","unexpected motion","unexpected material change","unexpected detection loss"),("underdetermined",),("remote_information","future_information","path_discontinuity","local_emergence","detection_dropout")),
 )
 
 def by_capability(cap):
