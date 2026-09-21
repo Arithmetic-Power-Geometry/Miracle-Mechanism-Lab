@@ -4,11 +4,11 @@ from miracle_lab.core.resolution_boundary import resolution_boundary
 from miracle_lab.core.ctc import Measurement
 
 class TestKnowledgeAgent(unittest.TestCase):
- def test_all_14_capabilities_covered(self):
-  self.assertEqual(len({x.capability for x in CLAIM_ONTOLOGY}),14)
+ def test_all_21_experiments_covered(self):
+  self.assertEqual(len({x.capability for x in CLAIM_ONTOLOGY}),21)
  def test_historical_alias_compiles_neutrally(self):
-  self.assertIn(("anima","microform"),classify_description("anima"))
-  self.assertEqual(audit_claim("microform")["epistemic_status"],"description compiled; phenomenon not established")
+  self.assertIn(("anima","scale_decrease"),classify_description("anima"))
+  self.assertEqual(audit_claim("scale_decrease")["epistemic_status"],"description compiled; phenomenon not established")
  def test_ambiguous_terms_not_forced(self):
   self.assertEqual(classify_description("siddhi"),())
  def test_resolution_boundary_preserves_indistinguishability(self):
