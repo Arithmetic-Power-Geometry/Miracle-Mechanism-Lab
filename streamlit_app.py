@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import math
 from dataclasses import asdict
 from miracle_lab.core.state import WorldState
 from miracle_lab.core.capabilities import CAPABILITIES, BY_NAME
@@ -15,13 +16,20 @@ st.markdown("""
 .hero h1 {margin:0; font-size:2.1rem;}
 .hero p {opacity:.88; margin:.35rem 0 0 0;}
 .card {border:1px solid #e5e7eb; border-radius:14px; padding:1rem; background:white;}
-.small {font-size:.9rem; opacity:.8;}
+.small {font-size:.9rem; opacity:.8;}\n.flowbox {border:1px solid #d1d5db; border-radius:16px; padding:1rem; text-align:center; font-weight:600; min-height:82px;}
 </style>
 """, unsafe_allow_html=True)
 
 st.markdown('<div class="hero"><h1>🧪 Anomalous Capability Simulator</h1><p>Explore hypothetical state transitions, ordinary mimics, and measurable consequences — without asserting that extraordinary phenomena are real.</p></div>', unsafe_allow_html=True)
 
 st.info("Research simulator only. Outputs are synthetic model results, not empirical evidence, medical advice, or proof that an unusual capability exists.")
+
+st.markdown("### How the simulator thinks")
+f1,f2,f3,f4=st.columns(4)
+f1.markdown('<div class="flowbox">① OBSERVATION<br><span class="small">What is reported?</span></div>',unsafe_allow_html=True)
+f2.markdown('<div class="flowbox">② STATE CHANGE<br><span class="small">What variables must move?</span></div>',unsafe_allow_html=True)
+f3.markdown('<div class="flowbox">③ COMPETING MODEL<br><span class="small">What ordinary route can imitate it?</span></div>',unsafe_allow_html=True)
+f4.markdown('<div class="flowbox">④ SEPARATION TEST<br><span class="small">What measurement tells them apart?</span></div>',unsafe_allow_html=True)
 
 with st.expander("👋 New here? Start in 60 seconds", expanded=True):
     st.markdown("""
@@ -186,6 +194,74 @@ if st.button("✨ Run simulation", type="primary", use_container_width=True):
     b.metric("Changed state variables", len(delta))
     c.metric("Ordinary mimic", spec.principal_mimic)
 
+    st.markdown("### Simulation map")
+    st.caption("This is a conceptual map of the calculation, not a photograph of a physical event.")
+    st.graphviz_chart(f"""
+    digraph G {{
+      rankdir=LR;
+      node [shape=box, style="rounded"];
+      A [label="Observed scenario"];
+      B [label="{spec.display_name}\\n({spec.code})"];
+      C [label="State transition\\n{spec.primary_variable}: {spec.expected_direction}"];
+      D [label="Constraint check"];
+      E [label="Ordinary mimic"];
+      F [label="Discriminating test"];
+      A -> B -> C -> D;
+      D -> E [label="compare"];
+      E -> F;
+    }}
+    """)
+
+    st.markdown("### Calculation summary")
+    calc_rows=[]
+    for name,value in delta.items():
+        before=getattr(result.before,name)
+        after=getattr(result.after,name)
+        calc_rows.append({"variable":name,"before":before,"after":after,"delta = after - before":value})
+    if calc_rows:
+        st.dataframe(pd.DataFrame(calc_rows),use_container_width=True,hide_index=True)
+
+    with st.expander("🧮 Show exactly how this result was calculated", expanded=True):
+        st.markdown("**Step 1 — Start from the baseline world state.** The simulator creates a declared baseline vector \\(X_0\\) containing position, mass, volume, viability, information access and other tracked quantities.")
+        st.markdown("**Step 2 — Apply the selected transition.** The selected model changes only its declared variables, producing \\(X_1\\).")
+        st.latex(r"\\Delta X = X_1 - X_0")
+        if cap=="local_emergence":
+            dm=kwargs.get("delta_mass_kg",0.020)
+            energy=dm*(299792458.0**2)
+            st.markdown(f"Here the requested local mass increase is **{dm:.6g} kg**. For accounting, the simulator computes its rest-mass energy equivalent:")
+            st.latex(r"E_{eq}=\\Delta m c^2")
+            st.write(f"Using c = 299,792,458 m/s gives **{energy:.6g} J**. This is an accounting equivalent, not a claim that this energy was physically observed or released.")
+        elif cap in ("gap_travel","instant_relocation"):
+            d=abs(kwargs.get("dx",1000.0)); elapsed=1e-6 if cap=="instant_relocation" else 60.0
+            speed=d/elapsed if elapsed else math.inf
+            st.latex(r"v_{required}=d/\\Delta t")
+            st.write(f"With d = {d:.6g} m and modeled Δt = {elapsed:.6g} s, required average speed = **{speed:.6g} m/s**.")
+        elif cap in ("microform","macroform"):
+            r=kwargs.get("scale",1.0)
+            st.latex(r"V_1=V_0 r")
+            st.write(f"The selected volume ratio is **r = {r:.6g}**. The inversion layer uses |ln(r)| as the declared geometry-deviation coordinate.")
+        elif cap=="lightform":
+            r=kwargs.get("mass_scale",1.0)
+            st.latex(r"m_1=m_0 r")
+            st.write(f"The selected effective-mass ratio is **{r:.6g}**; the model deviation is |1-r|.")
+        elif cap in ("dual_presence","multi_instance"):
+            n=2 if cap=="dual_presence" else kwargs.get("copies",2)
+            st.latex(r"R_{identity}=\\max(0,n-1)")
+            st.write(f"For **n = {n}** authenticated instances, the identity-locality residual is **{max(0,n-1):.6g} instance(s)**.")
+        elif cap=="unsupported_ascent":
+            st.latex(r"F_{reference}=mg")
+            st.write("The current benchmark uses a 70 kg reference state and standard gravitational acceleration 9.80665 m/s² when constructing the unsupported-force observable.")
+        elif cap in ("remote_sensing","future_sensing","remote_acquisition"):
+            st.write("The current synthetic benchmark assigns a declared information-excess observable and asks what ordinary signal/leakage route would have to be excluded. It is a model variable, not measured information from a real experiment.")
+        elif cap=="observer_dropout":
+            st.write("Observer access is changed from its baseline value to zero in the stipulated simulation. Independent sensing is then the proposed separator from occlusion or attention effects.")
+        elif cap=="accelerated_recovery":
+            st.write("The model changes the bounded viability state by the selected gain. A real study would require an operational endpoint, time course and matched controls; this simulator does not diagnose recovery.")
+        st.markdown("**Step 3 — Invert the observation.** The inversion engine asks for the smallest declared model extension that reproduces the synthetic observation.")
+        if mod:
+            st.code(f"mechanism = {mod.name}\nmagnitude = {mod.magnitude:.8g} {mod.unit}\nnormalized deviation = {mod.normalized_cost:.8g}",language="text")
+        st.markdown("**Step 4 — Challenge the result.** The simulator reports an ordinary mimic and a separating measurement. A model is scientifically interesting only if competing explanations can be tested rather than assumed away.")
+
     st.markdown("### What changed?")
     if delta:
         st.dataframe(pd.DataFrame([{"variable":k,"delta":v} for k,v in delta.items()]), use_container_width=True, hide_index=True)
@@ -202,10 +278,31 @@ if st.button("✨ Run simulation", type="primary", use_container_width=True):
     st.write(f"**Discriminating observation:** {spec.separator}")
     if mod:
         st.write(f"**Smallest modeled extension under current normalization:** {mod.name} — magnitude {mod.magnitude:.6g} {mod.unit}; normalized deviation {mod.normalized_cost:.6g}.")
-    st.caption("Normalized deviations are model-dependent comparison values, not probabilities and not measurements of supernatural strength.")
+    st.caption("Normalized deviations are model-dependent comparison values, not probabilities, confidence scores, evidence strength, or measurements of a real-world capability.")
+    with st.expander("What does normalized deviation mean?"):
+        st.write("Different residuals use different units (metres, joules, bits, instances, fractions). The inversion module divides some residual magnitudes by declared reference scales so they can be handled consistently inside the software. These scales are modeling choices. Comparing two normalized values does not establish which physical scenario is more plausible.")
+    with st.expander("What would a real experiment need?"):
+        st.markdown(f"""
+**Measure:** {spec.primary_variable} and the variables required by the separator.  
+**Exclude first:** {spec.principal_mimic}.  
+**Key test:** {spec.separator}.  
+**Record:** calibration, uncertainty, timing, provenance, exclusions, and the complete protocol before interpreting an unusual observation.
+
+The simulator supplies a test architecture; it does not substitute for real measurements.
+""")
     st.markdown("### Your scenario")
     st.write(scenario)
     st.warning("Interpretation: the software can simulate the requested hypothetical transition. It does not physically realize the event and does not establish that such a capability exists in nature.")
+
+st.markdown("---")
+st.markdown("## Project reference")
+r1,r2,r3=st.columns(3)
+r1.metric("Neutral capability models",len(CAPABILITIES))
+r2.metric("Model families",len(set(x.family for x in CAPABILITIES)))
+r3.metric("Benchmark design","4,200 synthetic rows")
+st.markdown("""
+The project separates four layers that are easy to confuse: **observation**, **model**, **constraint residual**, and **evidence**. A simulation can successfully reproduce an observation while providing zero evidence that the simulated mechanism occurs in nature.
+""")
 
 with st.expander("How to read a result"):
     st.markdown("""
