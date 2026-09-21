@@ -37,32 +37,22 @@ st.markdown("""
 .statusdot {display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e;margin-right:6px;}
 
 
+.stage{min-height:430px;background:radial-gradient(circle at 50% 55%,#18344a 0,#08111c 52%,#03070c 100%);}
+.stage-grid{position:absolute;left:0;right:0;bottom:0;height:48%;background-image:linear-gradient(rgba(74,222,128,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(74,222,128,.12) 1px,transparent 1px);background-size:34px 34px;transform:perspective(280px) rotateX(55deg);transform-origin:bottom;}
+.actor{position:relative;z-index:3;font-size:88px;text-align:center;margin:92px auto 20px;width:130px;filter:drop-shadow(0 0 18px rgba(125,211,252,.45));}
+.origin,.destination{position:absolute;bottom:70px;font:700 12px ui-monospace;color:#86efac;border:1px solid #166534;padding:5px 9px;border-radius:6px}.origin{left:10%}.destination{right:10%}
+.emerge{animation:emerge 2.1s ease-in-out infinite}.teleport{animation:teleport 2.8s steps(1,end) infinite}.travel{animation:travel 3.5s ease-in-out infinite}.ascend{animation:ascend 2.6s ease-in-out infinite}.shrink{animation:shrink 2.8s ease-in-out infinite}.grow{animation:grow 2.8s ease-in-out infinite}.float{animation:floaty 2.1s ease-in-out infinite}.fade{animation:fade 2.8s ease-in-out infinite}.duplicate{animation:duplicate 2.8s ease-in-out infinite}.signal{animation:signal 1.7s ease-in-out infinite}.pulse{animation:pulse 1.5s ease-in-out infinite}
+@keyframes emerge{0%,25%{opacity:0;transform:scale(.05) rotate(-30deg)}60%,100%{opacity:1;transform:scale(1) rotate(0)}}@keyframes teleport{0%,42%{transform:translateX(-260px);opacity:1}43%,55%{opacity:0}56%,100%{transform:translateX(260px);opacity:1}}@keyframes travel{0%{transform:translateX(-260px)}50%{opacity:.1}100%{transform:translateX(260px)}}@keyframes ascend{0%,100%{transform:translateY(70px)}50%{transform:translateY(-80px)}}@keyframes shrink{0%,100%{transform:scale(1)}50%{transform:scale(.16)}}@keyframes grow{0%,100%{transform:scale(.35)}50%{transform:scale(1.55)}}@keyframes fade{0%,100%{opacity:1}50%{opacity:.05;filter:blur(5px)}}@keyframes duplicate{0%,100%{text-shadow:0 0 transparent}50%{text-shadow:-80px 0 0 rgba(255,255,255,.75),80px 0 0 rgba(255,255,255,.75)}}@keyframes signal{0%,100%{filter:drop-shadow(0 0 5px #38bdf8)}50%{filter:drop-shadow(0 0 40px #38bdf8);transform:scale(1.15)}}@keyframes pulse{0%,100%{transform:scale(.9);opacity:.65}50%{transform:scale(1.15);opacity:1}}
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="hero"><h1>🧪 Anomalous Capability Simulator</h1><p>Explore hypothetical state transitions, ordinary mimics, and measurable consequences — without asserting that extraordinary phenomena are real.</p></div>', unsafe_allow_html=True)
+# Three-screen mission flow -------------------------------------------------
+if "screen" not in st.session_state:
+    st.session_state.screen="briefing"
+if "last_result" not in st.session_state:
+    st.session_state.last_result=None
 
-st.info("Research simulator only. Outputs are synthetic model results, not empirical evidence, medical advice, or proof that an unusual capability exists.")
-
-st.markdown("### How the simulator thinks")
-f1,f2,f3,f4=st.columns(4)
-f1.markdown('<div class="flowbox">① OBSERVATION<br><span class="small">What is reported?</span></div>',unsafe_allow_html=True)
-f2.markdown('<div class="flowbox">② STATE CHANGE<br><span class="small">What variables must move?</span></div>',unsafe_allow_html=True)
-f3.markdown('<div class="flowbox">③ COMPETING MODEL<br><span class="small">What ordinary route can imitate it?</span></div>',unsafe_allow_html=True)
-f4.markdown('<div class="flowbox">④ SEPARATION TEST<br><span class="small">What measurement tells them apart?</span></div>',unsafe_allow_html=True)
-
-with st.expander("👋 New here? Start in 60 seconds", expanded=True):
-    st.markdown("""
-**You do not need to know any capability name. Start with an event you are curious about.**
-
-1. Ask **what changed?** — size, mass, position, visibility, identity, information, recovery, or object inventory.
-2. Pick the closest capability below. The name is only a modeling shortcut.
-3. Change one parameter and run the simulation.
-4. Read **ordinary mimic** first. A surprising outcome is not automatically an unusual mechanism.
-5. Read **discriminating observation** to see what a real test would need to measure.
-
-**Example questions:** “What would have to change for a 20 g object to appear in a closed chamber?” · “What measurements distinguish hidden transport from instant relocation?” · “What would count as information arriving without an ordinary channel?”
-""")
+st.markdown('<div class="hero"><h1>ACS // FIELD LAB</h1><p>Interactive anomaly-model investigation console</p></div>', unsafe_allow_html=True)
 
 GUIDE = {
 "microform":("Something becomes dramatically smaller","What variables must change if an object's effective size falls by a million-fold?"),
@@ -156,7 +146,7 @@ labels={f"{x.code} · {x.display_name}":x.capability for x in CAPABILITIES}
 cap_to_label={v:k for k,v in labels.items()}
 
 if "scenario_text" not in st.session_state:
-    st.session_state.scenario_text="An object appears in a monitored chamber"
+    st.session_state.scenario_text="A 20 g sweet appears in a monitored chamber"
 if "capability_label" not in st.session_state:
     st.session_state.capability_label=cap_to_label["local_emergence"]
 
@@ -171,51 +161,54 @@ def apply_scenario():
     else:
         st.session_state.scenario_text=text
 
-left,right=st.columns([1,1])
-with left:
-    scenario_choice=st.selectbox(
-        "What are you curious about?",
-        list(SCENARIOS),
-        key="scenario_picker",
-        on_change=apply_scenario,
-        help="Pick a ready-made scenario. It automatically selects a matching model and sensible editable defaults."
-    )
-    st.caption("Select a starting scenario, then edit the description below if you want something more specific.")
-    scenario=st.text_input(
-        "Your editable question / scenario",
-        key="scenario_text",
-        help="You can rewrite this freely. The selected model and parameters remain editable."
-    )
-    selected_label=st.selectbox(
-        "Suggested capability model — editable",
-        list(labels),
-        key="capability_label",
-        help="Automatically aligned to the selected scenario. Change it if you want to compare another explanation."
-    )
-    cap=labels[selected_label]
-    spec=BY_NAME[cap]
-    st.markdown(f"**Best for:** {GUIDE[cap][0]}")
-    st.caption(f"Suggested question: {GUIDE[cap][1]}")
-    render_game_scene(cap,scenario)
-    with st.expander("Why this model? / Choose another"):
-        st.write("The scenario sets only a starting model. Nothing is locked. You can choose another capability and compare the results.")
-        st.markdown("""
-- **Size/shape:** Microform or Macroform
-- **Effective weight/support:** Lightform or Unsupported Ascent
-- **Movement/location:** Gap Travel or Instant Relocation
-- **Detection:** Observer Dropout
-- **Instances/identity:** Multi-Instance or Dual Presence
-- **Information:** Remote Sensing, Future Sensing, or Remote Acquisition
-- **Recovery:** Accelerated Recovery
-- **Object/mass appearance:** Local Emergence
-""")
+def scene_animation(cap,scenario,phase="experiment"):
+    icon,arena,title,sub=VISUALS[cap]
+    klass={
+      "local_emergence":"emerge","instant_relocation":"teleport","gap_travel":"travel",
+      "unsupported_ascent":"ascend","microform":"shrink","macroform":"grow",
+      "lightform":"float","observer_dropout":"fade","multi_instance":"duplicate",
+      "dual_presence":"duplicate","remote_sensing":"signal","future_sensing":"signal",
+      "remote_acquisition":"signal","accelerated_recovery":"pulse"
+    }[cap]
+    if cap=="local_emergence" and "sweet" in scenario.lower(): icon="🍬"
+    st.markdown(f"""
+    <div class="game-scene stage">
+      <div class="hud"><div class="hudline"><span><span class="statusdot"></span>LIVE SCENE</span><span>{arena}</span></div></div>
+      <div class="stage-grid"></div>
+      <div class="origin">A</div><div class="destination">B</div>
+      <div class="actor {klass}">{icon}</div>
+      <div class="game-caption">{title}</div>
+      <div class="game-sub">{sub}</div>
+      <div class="objective"><b>SCENE:</b> {scenario}</div>
+    </div>""",unsafe_allow_html=True)
 
-with right:
-    st.markdown("### Parameters — defaults are editable")
+if st.session_state.screen=="briefing":
+    st.markdown("## 01 // MISSION BRIEFING")
+    st.markdown('<div class="hud"><div class="hudline"><span>SELECT FIELD EVENT</span><span>INPUT CONSOLE</span></div><div class="objective"><b>OBJECTIVE:</b> Choose what you want to investigate. The next screen becomes a dedicated experimental environment for that choice.</div></div>',unsafe_allow_html=True)
+    scenario_choice=st.selectbox("What are you curious about?",list(SCENARIOS),key="scenario_picker",on_change=apply_scenario)
+    scenario=st.text_input("Editable mission description",key="scenario_text")
+    selected_label=st.selectbox("Suggested model — editable",list(labels),key="capability_label")
+    cap=labels[selected_label]; spec=BY_NAME[cap]
+    render_game_scene(cap,scenario)
+    st.markdown(f"**Mission objective:** {GUIDE[cap][0]}")
+    if st.button("ENTER EXPERIMENT →",type="primary",use_container_width=True):
+        st.session_state.screen="experiment"; st.rerun()
+
+elif st.session_state.screen=="experiment":
+    selected_label=st.session_state.capability_label
+    cap=labels[selected_label]; spec=BY_NAME[cap]; scenario=st.session_state.scenario_text
+    top1,top2=st.columns([1,4])
+    with top1:
+        if st.button("← BRIEFING",use_container_width=True):
+            st.session_state.screen="briefing"; st.rerun()
+    with top2:
+        st.markdown(f"## 02 // {VISUALS[cap][1]} · {spec.code}")
+    scene_animation(cap,scenario)
+    st.markdown("### INSTRUMENT PANEL")
     kwargs={}
     if cap in ("microform","macroform"):
         default=1e-6 if cap=="microform" else 1e6
-        kwargs["scale"]=st.number_input("Scale factor",min_value=1e-9,max_value=1e9,value=float(st.session_state.get("param_scale",default)),format="%.6g",key=f"input_scale_{cap}")
+        kwargs["scale"]=st.number_input("Geometric scale factor",min_value=1e-9,max_value=1e9,value=float(st.session_state.get("param_scale",default)),format="%.6g")
     elif cap=="lightform":
         kwargs["mass_scale"]=st.number_input("Effective-mass scale",min_value=1e-9,max_value=1.0,value=float(st.session_state.get("param_mass_scale",1e-6)),format="%.6g")
     elif cap=="remote_acquisition":
@@ -223,7 +216,7 @@ with right:
     elif cap=="multi_instance":
         kwargs["copies"]=st.slider("Authenticated instances",2,20,int(st.session_state.get("param_copies",2)))
     elif cap in ("gap_travel","instant_relocation"):
-        kwargs["dx"]=st.number_input("Displacement (m)",min_value=0.0,value=float(st.session_state.get("param_dx",1000.0)),key=f"input_dx_{cap}")
+        kwargs["dx"]=st.number_input("Displacement A → B (m)",min_value=0.0,value=float(st.session_state.get("param_dx",1000.0)))
     elif cap=="unsupported_ascent":
         kwargs["dz"]=st.number_input("Vertical displacement (m)",min_value=0.0,value=float(st.session_state.get("param_dz",1.0)))
     elif cap=="remote_sensing":
@@ -233,29 +226,21 @@ with right:
     elif cap=="accelerated_recovery":
         kwargs["viability_gain"]=st.slider("Viability gain",0.0,1.0,float(st.session_state.get("param_viability_gain",0.5)),0.05)
     elif cap=="local_emergence":
-        kwargs["delta_mass_kg"]=st.number_input("Local mass increase (kg)",min_value=0.0,value=float(st.session_state.get("param_delta_mass_kg",0.020)),format="%.6f")
-    st.caption("Defaults come from the selected scenario. Every displayed value can be changed before running the simulation.")
+        kwargs["delta_mass_kg"]=st.number_input("Object mass / local increase (kg)",min_value=0.0,value=float(st.session_state.get("param_delta_mass_kg",0.020)),format="%.6f")
+    st.caption("All mission defaults are editable. The animation follows the model family; the numerical engine uses these values.")
+    if st.button("▶ EXECUTE EXPERIMENT",type="primary",use_container_width=True):
+        st.session_state.last_kwargs=kwargs
+        st.session_state.screen="results"
+        st.rerun()
 
-st.markdown("## FIELD OPERATIONS CONSOLE")
-h1,h2,h3,h4=st.columns(4)
-h1.metric("MISSION",spec.code)
-h2.metric("STATUS","READY")
-h3.metric("MODEL",spec.display_name)
-h4.metric("RISK","SIMULATION")
-st.markdown(f"""
-<div class="hud">
-<div class="hudline"><span>OPERATOR BRIEF</span><span>MODEL LOCK: {spec.code}</span></div>
-<div class="objective"><b>MISSION BRIEF:</b> {GUIDE[cap][0]}. Your job is not to accept the first explanation. Instrument the scene, run the model, inspect the rival explanation, then decide what measurement would separate them.</div>
-</div>
-""",unsafe_allow_html=True)
-
-st.markdown("### 🎮 Mission controls")
-mc1,mc2,mc3=st.columns(3)
-mc1.markdown("**LOADOUT 01 · MISSION**\n\nChoose the field scenario.")
-mc2.markdown("**LOADOUT 02 · INSTRUMENTS**\n\nTune editable model parameters.")
-mc3.markdown("**LOADOUT 03 · DEPLOY**\n\nRun, inspect, challenge the explanation.")
-
-if st.button("🚀 Launch investigation", type="primary", use_container_width=True):
+elif st.session_state.screen=="results":
+    selected_label=st.session_state.capability_label
+    cap=labels[selected_label]; spec=BY_NAME[cap]; scenario=st.session_state.scenario_text
+    kwargs=st.session_state.get("last_kwargs",{})
+    if st.button("← RUN AGAIN"):
+        st.session_state.screen="experiment"; st.rerun()
+    st.markdown(f"## 03 // AFTER-ACTION ANALYSIS · {spec.code}")
+    scene_animation(cap,scenario,"results")
     state=WorldState()
     result=AGENTS[spec.family].simulate(cap,state,**kwargs)
     delta={k:v for k,v in result.required_delta.items() if abs(v)>0}
@@ -282,9 +267,9 @@ if st.button("🚀 Launch investigation", type="primary", use_container_width=Tr
         obs={"viability_gain":kwargs.get("viability_gain",0.5)}
 
     mod=minimum_modification(cap,obs)
-    st.success(f"Mission simulated: {spec.display_name}")
+    st.success(f"EXPERIMENT COMPLETE // {spec.display_name}")
     st.progress(100,text="Simulation complete · now inspect the evidence trail")
-    render_game_scene(cap,scenario)
+    # result scene already rendered above
     a,b,c=st.columns(3)
     a.metric("Capability code", spec.code)
     b.metric("Changed state variables", len(delta))
@@ -396,6 +381,7 @@ The simulator supplies a test architecture; it does not substitute for real meas
     st.markdown("### Your scenario")
     st.write(scenario)
     st.warning("Interpretation: the software can simulate the requested hypothetical transition. It does not physically realize the event and does not establish that such a capability exists in nature.")
+
 
 st.markdown("---")
 st.markdown("## Project reference")
