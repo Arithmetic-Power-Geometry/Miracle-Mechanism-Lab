@@ -19,6 +19,17 @@ FAMILY = {
     "inertial_gravitational_extension": "gravity_inertia",
     "force_balance_extension": "force_balance",
     "mass_energy_accounting_extension": "mass_energy",
+    "boundary_relation_extension": "boundary",
+    "identity_cardinality_extension": "identity",
+    "spatial_information_extension": "information_spatial",
+    "future_information_extension": "information_future",
+    "past_information_extension": "information_past",
+    "access_channel_extension": "access_channel",
+    "external_causation_extension": "external_causation",
+    "environmental_causation_extension": "environmental_causation",
+    "biological_state_extension": "biology_state",
+    "hazard_response_extension": "hazard_response",
+    "form_identity_extension": "form_identity",
 }
 
 def pareto_frontier(capability: str, observation: Dict[str,float]) -> List[FrontierPoint]:
