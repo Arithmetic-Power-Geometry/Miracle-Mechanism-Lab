@@ -17,6 +17,17 @@ st.markdown("""
 .hero p {opacity:.88; margin:.35rem 0 0 0;}
 .card {border:1px solid #e5e7eb; border-radius:14px; padding:1rem; background:white;}
 .small {font-size:.9rem; opacity:.8;}\n.flowbox {border:1px solid #d1d5db; border-radius:16px; padding:1rem; text-align:center; font-weight:600; min-height:82px;}
+.game-scene {position:relative; overflow:hidden; min-height:270px; border-radius:24px; padding:24px; background:linear-gradient(160deg,#0f172a,#1e293b); color:white; border:1px solid #334155; box-shadow:0 14px 38px rgba(15,23,42,.22);}
+.game-title {font-size:1rem; opacity:.72; letter-spacing:.12em; font-weight:700;}
+.game-object {font-size:76px; text-align:center; margin:20px 0 6px 0; animation:floaty 2.4s ease-in-out infinite;}
+.game-caption {text-align:center; font-size:1.08rem; font-weight:700;}
+.game-sub {text-align:center; opacity:.72; font-size:.88rem;}
+.scan {height:2px;background:#93c5fd;box-shadow:0 0 14px #93c5fd;animation:scan 2.2s linear infinite;}
+@keyframes floaty {0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-12px) scale(1.04)}}
+@keyframes scan {0%{transform:translateY(0);opacity:.2}50%{transform:translateY(160px);opacity:1}100%{transform:translateY(0);opacity:.2}}
+@keyframes popin {0%{transform:scale(.2);opacity:0}65%{transform:scale(1.18);opacity:1}100%{transform:scale(1);opacity:1}}
+.pop {animation:popin 1s ease-out;}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -62,6 +73,7 @@ GUIDE = {
 }
 
 SCENARIOS = {
+"A 20 g sweet appears in a monitored chamber":("local_emergence",{"delta_mass_kg":0.020}),
 "An object appears in a monitored chamber":("local_emergence",{"delta_mass_kg":0.020}),
 "An object changes position with no observed intermediate path":("instant_relocation",{"dx":1000.0}),
 "A journey contains a large unobserved segment":("gap_travel",{"dx":1000.0}),
@@ -77,6 +89,36 @@ SCENARIOS = {
 "Something is accessed without an observed route":("remote_acquisition",{"remote_information_gain":1.0}),
 "Recovery is unusually fast":("accelerated_recovery",{"viability_gain":0.5}),
 }
+
+VISUALS={
+"local_emergence":("🍬","CHAMBER LAB","Object inventory changed","Mass · provenance · energy accounting"),
+"instant_relocation":("📦","RELOCATION ARENA","Source → destination","Path continuity · timing · identity"),
+"gap_travel":("🚗","TRACKING COURSE","A path segment is missing","Continuous tracking · checkpoints"),
+"unsupported_ascent":("🎈","FORCE LAB","Upward motion under test","Force · acceleration · environment"),
+"microform":("🔬","SCALE LAB","Effective extent decreases","Geometry · mass · identity"),
+"macroform":("🔭","SCALE LAB","Effective extent increases","Geometry · mass · identity"),
+"lightform":("🪶","MASS LAB","Effective response decreases","Force · acceleration · support"),
+"observer_dropout":("👁️","SENSOR ROOM","Detection channel changes","Camera · thermal · range sensors"),
+"multi_instance":("👥","IDENTITY LAB","Multiple instances","Authentication · provenance · timing"),
+"dual_presence":("📍","TWIN-SITE LAB","One identity, two sites","Authentication · synchronized clocks"),
+"remote_sensing":("📡","INFORMATION LAB","Unknown information route","Blinding · randomization · leakage control"),
+"future_sensing":("⏱️","TIMING LAB","Information precedes target","Commitment · RNG · timestamps"),
+"remote_acquisition":("🛰️","ACCESS LAB","Access without observed route","Channel audit · randomized target"),
+"accelerated_recovery":("📈","TRAJECTORY LAB","Rate differs from reference","Endpoint · time course · controls"),
+}
+
+def render_game_scene(cap,scenario):
+    icon,arena,title,sub=VISUALS[cap]
+    st.markdown(f"""
+    <div class="game-scene">
+      <div class="game-title">MISSION · {arena}</div>
+      <div class="scan"></div>
+      <div class="game-object pop">{icon}</div>
+      <div class="game-caption">{title}</div>
+      <div class="game-sub">{sub}</div>
+      <div style="margin-top:18px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.07);font-size:.86rem;">🎯 {scenario}</div>
+    </div>
+    """,unsafe_allow_html=True)
 
 labels={f"{x.code} · {x.display_name}":x.capability for x in CAPABILITIES}
 cap_to_label={v:k for k,v in labels.items()}
@@ -122,6 +164,7 @@ with left:
     spec=BY_NAME[cap]
     st.markdown(f"**Best for:** {GUIDE[cap][0]}")
     st.caption(f"Suggested question: {GUIDE[cap][1]}")
+    render_game_scene(cap,scenario)
     with st.expander("Why this model? / Choose another"):
         st.write("The scenario sets only a starting model. Nothing is locked. You can choose another capability and compare the results.")
         st.markdown("""
@@ -161,7 +204,13 @@ with right:
         kwargs["delta_mass_kg"]=st.number_input("Local mass increase (kg)",min_value=0.0,value=float(st.session_state.get("param_delta_mass_kg",0.020)),format="%.6f")
     st.caption("Defaults come from the selected scenario. Every displayed value can be changed before running the simulation.")
 
-if st.button("✨ Run simulation", type="primary", use_container_width=True):
+st.markdown("### 🎮 Mission controls")
+mc1,mc2,mc3=st.columns(3)
+mc1.markdown("**1 · Choose**\n\nPick a scenario.")
+mc2.markdown("**2 · Tune**\n\nEdit the model and parameters.")
+mc3.markdown("**3 · Investigate**\n\nRun it, then challenge the explanation.")
+
+if st.button("🚀 Launch investigation", type="primary", use_container_width=True):
     state=WorldState()
     result=AGENTS[spec.family].simulate(cap,state,**kwargs)
     delta={k:v for k,v in result.required_delta.items() if abs(v)>0}
@@ -188,12 +237,19 @@ if st.button("✨ Run simulation", type="primary", use_container_width=True):
         obs={"viability_gain":kwargs.get("viability_gain",0.5)}
 
     mod=minimum_modification(cap,obs)
-    st.success(f"Simulation complete: {spec.display_name}")
+    st.success(f"Mission simulated: {spec.display_name}")
+    st.progress(100,text="Simulation complete · now inspect the evidence trail")
+    render_game_scene(cap,scenario)
     a,b,c=st.columns(3)
     a.metric("Capability code", spec.code)
     b.metric("Changed state variables", len(delta))
     c.metric("Ordinary mimic", spec.principal_mimic)
 
+    st.markdown("### 🧭 Investigation board")
+    q1,q2,q3=st.columns(3)
+    q1.markdown("**CLUE 1 — State**\n\nWhat changed in the modeled world?")
+    q2.markdown(f"**CLUE 2 — Rival**\n\n{spec.principal_mimic}")
+    q3.markdown(f"**CLUE 3 — Test**\n\n{spec.separator}")
     st.markdown("### Simulation map")
     st.caption("This is a conceptual map of the calculation, not a photograph of a physical event.")
     st.graphviz_chart(f"""
@@ -312,6 +368,9 @@ with st.expander("How to read a result"):
 **Discriminating observation** = a measurement intended to separate those explanations.  
 **Normalized deviation** = a model-dependent comparison number, not a probability or a power score.
 """)
+
+with st.expander("🎮 Why the game-like interface?"):
+    st.write("The visual missions are an educational interface over the same deterministic research model. Animation, icons and mission language do not add evidence or change the calculations. The purpose is to make model comparison, controls and falsification easier to explore.")
 
 with st.expander("About this project"):
     st.write("The simulator uses project-created neutral labels and studies hypothetical capability patterns as computational models.")
