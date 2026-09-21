@@ -1,16 +1,20 @@
 # Synthetic benchmark dataset
 
-This repository uses a deliberately synthetic dataset to test the inference machinery. It is **not evidence for any extraordinary phenomenon**.
+This repository uses a deliberately synthetic benchmark to test the ACS inference machinery. It is **not empirical evidence for any extraordinary phenomenon**.
 
-Generation design:
-- 14 neutral capability classes.
-- Three worlds per capability: baseline, ordinary mimic, stipulated simulation.
-- 100 seeded trials per capability/world cell.
-- Total: 4,200 rows.
-- Fixed seed family beginning at 20260921.
+## Canonical design
 
-The capability labels are project-created neutral terms such as Microform, Dual Presence, Remote Sensing, and Local Emergence. The dataset contains no religious labels, scriptures, communities, practitioners, or claims about any faith tradition.
+- 21 generic experiments (GX-01 through GX-21), identical to the canonical software ontology.
+- Three stipulated worlds per experiment: `baseline`, `mimic`, and `literal_simulation`.
+- 100 seeded trials per experiment/world cell.
+- 63 balanced cells and 6,300 rows.
+- Fixed deterministic seed family beginning at 20260921.
+- Each row stores the canonical experiment key/code, synthetic target and mimic signals, serialized outputs from the same quantitative execution engine used by the application, and the interpretation boundary.
 
-Purpose: verify that analysis code does not confuse an ordinary mimic with the stipulated simulation world, and expose cases where observations are non-separating.
+Examples and tradition-specific vocabulary are not dataset classes. They remain nested descriptive mappings to generic experiments.
 
-The dataset contains simulated observables only. No human participants, personal data, or empirical validation are involved.
+## Purpose and limits
+
+The benchmark tests whether software components preserve distinctions among baseline, deliberately ambiguous ordinary-mimic, and stipulated target-model conditions. The target/mimic signal distributions are design choices for software validation, not measured effect sizes, prevalence estimates, or evidence about nature.
+
+No human participants, personal data, scriptures, communities, practitioners, or empirical claims are represented in the generated rows.
