@@ -18,7 +18,11 @@ jobs:
       - name: Unit tests
         run: python -m unittest discover -s tests -v
       - name: Streamlit syntax check
-        run: python -m py_compile streamlit_app.py
+        run: python -m py_compile streamlit_app.py streamlit_21.py
+      - name: Generate CTC reproducibility artifacts
+        run: python -m scripts.generate_ctc_artifacts
+      - name: Verify CTC artifact manifest
+        run: python -m scripts.verify_ctc_artifacts
       - name: Generate synthetic benchmark
         run: python -m scripts.generate_dataset
       - name: Audit dataset
