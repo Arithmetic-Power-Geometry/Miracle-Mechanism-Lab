@@ -12,7 +12,7 @@ class TestStreamlitApp(unittest.TestCase):
         at=AppTest.from_file(str(app_path))
         at.run(timeout=20)
         self.assertFalse(at.exception)
-        self.assertGreaterEqual(len(at.selectbox),1)
+        self.assertGreaterEqual(len(at.selectbox),2)\n        self.assertGreaterEqual(len(at.text_input),1)\n        self.assertEqual(at.selectbox[0].label,"What are you curious about?")
         self.assertGreaterEqual(len(at.button),1)
 
 if __name__=="__main__":
