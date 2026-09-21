@@ -266,176 +266,172 @@ elif st.session_state.screen=="results":
     kwargs=st.session_state.get("last_kwargs",{})
     if st.button("← RUN AGAIN"):
         st.session_state.screen="experiment"; st.rerun()
-    st.markdown(f"## 03 // AFTER-ACTION ANALYSIS · {spec.code}")
+
+    st.markdown(f"## 03 // EXPERIMENT REPORT · {spec.code}")
     scene_animation(cap,scenario,"results")
-    toolbelt(cap)
-    st.markdown('<div class="hud"><div class="hudline"><span>OBJECTIVES COMPLETE</span><span>XP +100 · ANALYSIS UNLOCKED</span></div><div class="missionbar"><div style="width:100%"></div></div></div>',unsafe_allow_html=True)
     state=WorldState()
+    if cap=="accelerated_recovery":
+        state=WorldState(biological_viability=0.4)
     result=AGENTS[spec.family].simulate(cap,state,**kwargs)
-    delta={k:v for k,v in result.required_delta.items() if abs(v)>0}
+    delta={k:v for k,v in result.required_delta.items() if abs(v)>1e-15}
+
+    # Build observation from the experiment itself, never from a generic constant.
     obs={}
+    derived=[]
     if cap in ("gap_travel","instant_relocation"):
-        obs={"distance_m":abs(kwargs.get("dx",1000.0)),"elapsed_s":1e-6 if cap=="instant_relocation" else 60.0}
+        d=abs(kwargs.get("dx",1000.0)); elapsed=60.0 if cap=="gap_travel" else 1e-6
+        speed=d/elapsed if elapsed>0 else math.inf
+        obs={"distance_m":d,"elapsed_s":elapsed}
+        derived=[("Displacement",f"{d:.6g} m"),("Modeled interval",f"{elapsed:.6g} s"),("Required average speed",f"{speed:.6g} m/s")]
     elif cap in ("dual_presence","multi_instance"):
-        obs={"authenticated_instances":2.0 if cap=="dual_presence" else float(kwargs.get("copies",2))}
+        n=2.0 if cap=="dual_presence" else float(kwargs.get("copies",2))
+        obs={"authenticated_instances":n}
+        derived=[("Authenticated instances",f"{n:g}"),("Identity-locality excess",f"{max(0,n-1):g} instance(s)")]
     elif cap=="unsupported_ascent":
-        obs={"unsupported_force_n":70.0*9.80665}
+        dz=kwargs.get("dz",1.0); force=state.mass*9.80665
+        obs={"unsupported_force_n":force}
+        derived=[("Vertical displacement",f"{dz:.6g} m"),("Reference mass",f"{state.mass:.6g} kg"),("Reference weight mg",f"{force:.6g} N")]
     elif cap=="local_emergence":
-        dm=kwargs.get("delta_mass_kg",0.020); obs={"mass_energy_j":dm*(299792458.0**2)}
-    elif cap in ("remote_sensing","future_sensing","remote_acquisition"):
-        obs={"information_excess_bits":16.0}
-    elif cap=="microform":
-        obs={"volume_ratio":kwargs.get("scale",1e-6)}
-    elif cap=="macroform":
-        obs={"volume_ratio":kwargs.get("scale",1e6)}
+        dm=kwargs.get("delta_mass_kg",0.020); energy=dm*(299792458.0**2)
+        obs={"mass_energy_j":energy}
+        derived=[("Local mass increase",f"{dm:.6g} kg"),("Rest-mass energy equivalent",f"{energy:.6g} J"),("Final tracked mass",f"{result.after.mass:.6g} kg")]
+    elif cap=="remote_sensing":
+        gain=kwargs.get("information_gain",1.0); obs={"information_excess_bits":gain}
+        derived=[("Declared information gain",f"{gain:.6g} model-unit"),("Ordinary causal access after",f"{result.after.causal_access:.6g}")]
+    elif cap=="remote_acquisition":
+        gain=kwargs.get("remote_information_gain",1.0); obs={"information_excess_bits":gain}
+        derived=[("Declared remote access gain",f"{gain:.6g} model-unit"),("Information state after",f"{result.after.information_state:.6g}")]
+    elif cap=="future_sensing":
+        h=kwargs.get("horizon",60.0); obs={"information_excess_bits":h}
+        derived=[("Prediction horizon",f"{h:.6g} s"),("Future-information coordinate",f"{result.after.prediction_horizon:.6g} s")]
+    elif cap in ("microform","macroform"):
+        r=kwargs.get("scale",1.0); obs={"volume_ratio":r}
+        linear=r**(1/3) if r>=0 else math.nan
+        derived=[("Volume ratio V1/V0",f"{r:.6g}"),("Equivalent isotropic linear ratio",f"{linear:.6g}"),("Final modeled volume",f"{result.after.volume:.6g} m³")]
     elif cap=="lightform":
-        obs={"effective_mass_ratio":kwargs.get("mass_scale",1e-6)}
+        r=kwargs.get("mass_scale",1.0); obs={"effective_mass_ratio":r}
+        derived=[("Effective-mass ratio",f"{r:.6g}"),("Initial mass",f"{state.mass:.6g} kg"),("Final effective mass",f"{result.after.mass:.6g} kg")]
     elif cap=="observer_dropout":
-        obs={"observer_access":0.0}
+        obs={"observer_access":result.after.observer_access}
+        derived=[("Observer access before",f"{state.observer_access:.6g}"),("Observer access after",f"{result.after.observer_access:.6g}")]
     elif cap=="accelerated_recovery":
-        obs={"viability_gain":kwargs.get("viability_gain",0.5)}
+        gain=result.after.biological_viability-state.biological_viability
+        obs={"viability_gain":gain}
+        derived=[("Baseline viability",f"{state.biological_viability:.6g}"),("Final viability",f"{result.after.biological_viability:.6g}"),("Realized gain",f"{gain:.6g}")]
 
     mod=minimum_modification(cap,obs)
-    st.success(f"EXPERIMENT COMPLETE // {spec.display_name}")
-    st.progress(100,text="Simulation complete · now inspect the evidence trail")
-    # result scene already rendered above
-    a,b,c=st.columns(3)
-    a.metric("Capability code", spec.code)
-    b.metric("Changed state variables", len(delta))
-    c.metric("Ordinary mimic", spec.principal_mimic)
 
-    st.markdown("## AFTER-ACTION INTELLIGENCE")
-    st.markdown('<div class="hud"><div class="hudline"><span><span class="statusdot"></span>TELEMETRY CAPTURED</span><span>ANALYSIS UNLOCKED</span></div></div>',unsafe_allow_html=True)
-    st.markdown("### 🧭 Investigation board")
-    q1,q2,q3=st.columns(3)
-    q1.markdown("**CLUE 1 — State**\n\nWhat changed in the modeled world?")
-    q2.markdown(f"**CLUE 2 — Rival**\n\n{spec.principal_mimic}")
-    q3.markdown(f"**CLUE 3 — Test**\n\n{spec.separator}")
-    st.markdown("### Simulation map")
-    st.caption("This is a conceptual map of the calculation, not a photograph of a physical event.")
-    st.graphviz_chart(f"""
-    digraph G {{
-      rankdir=LR;
-      node [shape=box, style="rounded"];
-      A [label="Observed scenario"];
-      B [label="{spec.display_name}\\n({spec.code})"];
-      C [label="State transition\\n{spec.primary_variable}: {spec.expected_direction}"];
-      D [label="Constraint check"];
-      E [label="Ordinary mimic"];
-      F [label="Discriminating test"];
-      A -> B -> C -> D;
-      D -> E [label="compare"];
-      E -> F;
-    }}
-    """)
+    st.markdown("### MISSION SUMMARY")
+    st.markdown(f"""**Scenario.** {scenario}
 
-    st.markdown("### Calculation summary")
-    calc_rows=[]
-    for name,value in delta.items():
-        before=getattr(result.before,name)
-        after=getattr(result.after,name)
-        calc_rows.append({"variable":name,"before":before,"after":after,"delta = after - before":value})
-    if calc_rows:
-        st.dataframe(pd.DataFrame(calc_rows),use_container_width=True,hide_index=True)
+**Model used.** {spec.display_name} ({spec.code}), family `{spec.family}`.
 
-    with st.expander("🧮 Show exactly how this result was calculated", expanded=True):
-        st.markdown("**Step 1 — Start from the baseline world state.** The simulator creates a declared baseline vector \\(X_0\\) containing position, mass, volume, viability, information access and other tracked quantities.")
-        st.markdown("**Step 2 — Apply the selected transition.** The selected model changes only its declared variables, producing \\(X_1\\).")
-        st.latex(r"\\Delta X = X_1 - X_0")
-        if cap=="local_emergence":
-            dm=kwargs.get("delta_mass_kg",0.020)
-            energy=dm*(299792458.0**2)
-            st.markdown(f"Here the requested local mass increase is **{dm:.6g} kg**. For accounting, the simulator computes its rest-mass energy equivalent:")
-            st.latex(r"E_{eq}=\\Delta m c^2")
-            st.write(f"Using c = 299,792,458 m/s gives **{energy:.6g} J**. This is an accounting equivalent, not a claim that this energy was physically observed or released.")
-        elif cap in ("gap_travel","instant_relocation"):
-            d=abs(kwargs.get("dx",1000.0)); elapsed=1e-6 if cap=="instant_relocation" else 60.0
-            speed=d/elapsed if elapsed else math.inf
-            st.latex(r"v_{required}=d/\\Delta t")
-            st.write(f"With d = {d:.6g} m and modeled Δt = {elapsed:.6g} s, required average speed = **{speed:.6g} m/s**.")
-        elif cap in ("microform","macroform"):
-            r=kwargs.get("scale",1.0)
-            st.latex(r"V_1=V_0 r")
-            st.write(f"The selected volume ratio is **r = {r:.6g}**. The inversion layer uses |ln(r)| as the declared geometry-deviation coordinate.")
-        elif cap=="lightform":
-            r=kwargs.get("mass_scale",1.0)
-            st.latex(r"m_1=m_0 r")
-            st.write(f"The selected effective-mass ratio is **{r:.6g}**; the model deviation is |1-r|.")
-        elif cap in ("dual_presence","multi_instance"):
-            n=2 if cap=="dual_presence" else kwargs.get("copies",2)
-            st.latex(r"R_{identity}=\\max(0,n-1)")
-            st.write(f"For **n = {n}** authenticated instances, the identity-locality residual is **{max(0,n-1):.6g} instance(s)**.")
-        elif cap=="unsupported_ascent":
-            st.latex(r"F_{reference}=mg")
-            st.write("The current benchmark uses a 70 kg reference state and standard gravitational acceleration 9.80665 m/s² when constructing the unsupported-force observable.")
-        elif cap in ("remote_sensing","future_sensing","remote_acquisition"):
-            st.write("The current synthetic benchmark assigns a declared information-excess observable and asks what ordinary signal/leakage route would have to be excluded. It is a model variable, not measured information from a real experiment.")
-        elif cap=="observer_dropout":
-            st.write("Observer access is changed from its baseline value to zero in the stipulated simulation. Independent sensing is then the proposed separator from occlusion or attention effects.")
-        elif cap=="accelerated_recovery":
-            st.write("The model changes the bounded viability state by the selected gain. A real study would require an operational endpoint, time course and matched controls; this simulator does not diagnose recovery.")
-        st.markdown("**Step 3 — Invert the observation.** The inversion engine asks for the smallest declared model extension that reproduces the synthetic observation.")
-        if mod:
-            st.code(f"mechanism = {mod.name}\nmagnitude = {mod.magnitude:.8g} {mod.unit}\nnormalized deviation = {mod.normalized_cost:.8g}",language="text")
-        st.markdown("**Step 4 — Challenge the result.** The simulator reports an ordinary mimic and a separating measurement. A model is scientifically interesting only if competing explanations can be tested rather than assumed away.")
+**What the software did.** {result.notes.get("claim_model","State transition model")}.
 
-    st.markdown("### What changed?")
-    if delta:
-        st.dataframe(pd.DataFrame([{"variable":k,"delta":v} for k,v in delta.items()]), use_container_width=True, hide_index=True)
-    else:
-        st.write("No state variable changed under this parameterization.")
+**Interpretation boundary.** This report describes a synthetic state-transition experiment. It is not a record of a physical event and is not evidence that the modeled mechanism exists.""")
 
-    st.markdown("### Result in plain language")
-    st.write(f"The simulator changed **{', '.join(delta) if delta else 'no tracked state variable'}** to represent the selected hypothetical outcome.")
-    st.write("This tells you what the model had to change; it does **not** tell you that this is what happened in the physical world.")
-    st.markdown("### How the model realizes the outcome")
-    st.write(result.notes.get("claim_model","State transition model"))
-    st.write(f"**Known constraint:** {spec.known_constraint}")
-    st.write(f"**Best ordinary mimic to exclude:** {spec.principal_mimic}")
-    st.write(f"**Discriminating observation:** {spec.separator}")
+    st.markdown("### INPUTS ACTUALLY USED")
+    input_rows=[{"parameter":k,"value":v} for k,v in kwargs.items()]
+    if input_rows: st.dataframe(pd.DataFrame(input_rows),use_container_width=True,hide_index=True)
+    else: st.write("This model uses its declared baseline state and has no additional numeric input.")
+
+    st.markdown("### BEFORE → AFTER STATE")
+    rows=[]
+    for name in result.before.__dataclass_fields__:
+        b=getattr(result.before,name); a=getattr(result.after,name)
+        rows.append({"state variable":name,"before":b,"after":a,"delta":a-b,"changed":"YES" if abs(a-b)>1e-15 else "—"})
+    st.dataframe(pd.DataFrame(rows),use_container_width=True,hide_index=True)
+
+    st.markdown("### EXPERIMENT-SPECIFIC DERIVED QUANTITIES")
+    st.dataframe(pd.DataFrame([{"quantity":k,"value":v} for k,v in derived]),use_container_width=True,hide_index=True)
+
+    st.markdown("### HOW THIS EXPERIMENT WAS CALCULATED")
+    st.latex(r"X_1=T_{model}(X_0;\theta),\qquad \Delta X=X_1-X_0")
+    if cap=="local_emergence":
+        dm=kwargs.get("delta_mass_kg",0.020); energy=dm*(299792458.0**2)
+        st.write(f"The selected object contributes Δm = {dm:.6g} kg to the tracked local mass inventory. The simulator therefore sets m₁ = m₀ + Δm = {result.after.mass:.6g} kg.")
+        st.latex(r"E_{eq}=\Delta m c^2")
+        st.write(f"With c = 299,792,458 m/s, E_eq = {energy:.6g} J. This is the rest-mass energy equivalent used for accounting; the simulation did not measure or release that energy.")
+    elif cap in ("instant_relocation","gap_travel"):
+        d=abs(kwargs.get("dx",1000.0)); t=1e-6 if cap=="instant_relocation" else 60.0
+        st.write(f"The model changes x by {d:.6g} m. Its benchmark interval is {t:.6g} s, so the implied average traversal rate is {d/t:.6g} m/s.")
+        st.latex(r"v_{req}=|x_1-x_0|/\Delta t")
+        st.write("The key issue is not merely speed: the selected model stipulates missing or discontinuous path information, so continuous authenticated tracking is the critical separator.")
+    elif cap in ("microform","macroform"):
+        r=kwargs.get("scale",1.0)
+        st.latex(r"V_1=V_0r")
+        st.write(f"V₀ = {state.volume:.6g} m³, r = {r:.6g}, giving V₁ = {result.after.volume:.6g} m³. Under isotropic scaling the corresponding linear ratio is r^(1/3) = {r**(1/3):.6g}.")
+    elif cap=="lightform":
+        r=kwargs.get("mass_scale",1.0)
+        st.latex(r"m_1=m_0r")
+        st.write(f"m₀ = {state.mass:.6g} kg and r = {r:.6g}, giving modeled effective mass m₁ = {result.after.mass:.6g} kg.")
+    elif cap=="unsupported_ascent":
+        dz=kwargs.get("dz",1.0)
+        st.write(f"The state is displaced vertically by Δz = {dz:.6g} m. For the {state.mass:.6g} kg baseline, mg = {state.mass*9.80665:.6g} N is shown as the reference gravitational force that an experimental support/force audit would need to account for.")
+    elif cap in ("dual_presence","multi_instance"):
+        n=2 if cap=="dual_presence" else kwargs.get("copies",2)
+        st.latex(r"R_{identity}=\max(0,n-1)")
+        st.write(f"n = {n}; therefore the modeled excess beyond one localized authenticated instance is {max(0,n-1)}.")
+    elif cap=="observer_dropout":
+        st.write(f"Observer access changes from {state.observer_access:.6g} to {result.after.observer_access:.6g}. The model does not equate this with physical disappearance; independent sensing is required to distinguish detection failure from object absence.")
+    elif cap=="future_sensing":
+        h=kwargs.get("horizon",60.0)
+        st.write(f"The future-information coordinate is assigned a horizon of {h:.6g} s. A real test would require a prediction commitment timestamp preceding randomized target generation.")
+    elif cap in ("remote_sensing","remote_acquisition"):
+        gain=kwargs.get("information_gain",kwargs.get("remote_information_gain",1.0))
+        st.write(f"The declared information/access coordinate increases by {gain:.6g} model-unit(s). This is a synthetic coordinate, not a measured bit count. A real protocol must operationalize scoring before data collection.")
+    elif cap=="accelerated_recovery":
+        st.write(f"For visualization the baseline viability is 0.4 rather than the default ceiling of 1.0, allowing the requested change to be represented. The realized transition is {state.biological_viability:.3f} → {result.after.biological_viability:.3f}. A real study would require a defined endpoint, time axis and matched controls.")
+
+    st.markdown("### INVERSION / MINIMUM MODEL EXTENSION")
     if mod:
-        st.write(f"**Smallest modeled extension under current normalization:** {mod.name} — magnitude {mod.magnitude:.6g} {mod.unit}; normalized deviation {mod.normalized_cost:.6g}.")
-    st.caption("Normalized deviations are model-dependent comparison values, not probabilities, confidence scores, evidence strength, or measurements of a real-world capability.")
-    with st.expander("What does normalized deviation mean?"):
-        st.write("Different residuals use different units (metres, joules, bits, instances, fractions). The inversion module divides some residual magnitudes by declared reference scales so they can be handled consistently inside the software. These scales are modeling choices. Comparing two normalized values does not establish which physical scenario is more plausible.")
-    with st.expander("What would a real experiment need?"):
-        st.markdown(f"""
-**Measure:** {spec.primary_variable} and the variables required by the separator.  
-**Exclude first:** {spec.principal_mimic}.  
-**Key test:** {spec.separator}.  
-**Record:** calibration, uncertainty, timing, provenance, exclusions, and the complete protocol before interpreting an unusual observation.
+        st.write(f"The inversion layer maps the synthetic observation to **{mod.name}** with magnitude **{mod.magnitude:.6g} {mod.unit}** and normalized deviation **{mod.normalized_cost:.6g}**.")
+        st.caption("Normalized deviation is an internal model-comparison coordinate. It is not probability, confidence, evidence strength, likelihood of the event, or a score of a real capability.")
+    else:
+        st.write("No inversion residual is defined for this configuration.")
 
-The simulator supplies a test architecture; it does not substitute for real measurements.
-""")
-    st.markdown("### Your scenario")
-    st.write(scenario)
-    st.warning("Interpretation: the software can simulate the requested hypothetical transition. It does not physically realize the event and does not establish that such a capability exists in nature.")
+    st.markdown("### COMPETING EXPLANATION AND DECISIVE TEST")
+    st.write(f"**Primary ordinary competitor:** {spec.principal_mimic}.")
+    st.write(f"**Why it matters:** a conventional process can reproduce part or all of the observed appearance without requiring the selected model.")
+    st.write(f"**Discriminating measurement:** {spec.separator}.")
+    st.write(f"**Primary quantity to measure:** {spec.primary_variable}; expected modeled direction: **{spec.expected_direction}**.")
+    st.write(f"**Constraint being challenged or audited:** {spec.known_constraint}.")
 
+    st.markdown("### WHAT A REAL PROTOCOL WOULD NEED")
+    protocol={
+      "local_emergence":"Pre/post calibrated chamber mass; continuous chamber-boundary recording; independent object provenance; environmental monitoring; inventory reconciliation; predeclared exclusion criteria.",
+      "instant_relocation":"Synchronized source/destination recording; continuous path coverage; object authentication before and after; calibrated clocks; exclusion of substitution and hidden transport.",
+      "gap_travel":"Continuous authenticated tracking across the claimed gap; independent checkpoints; synchronized timestamps; route coverage and identity continuity.",
+      "unsupported_ascent":"Force platform or load path; airflow measurement; magnetic/electric field monitoring; synchronized motion capture; complete support audit.",
+      "microform":"Calibrated 3D geometry, mass and identity before/after; perspective controls; instrument calibration and uncertainty.",
+      "macroform":"Calibrated 3D geometry, mass and identity before/after; perspective controls; instrument calibration and uncertainty.",
+      "lightform":"Independent mass/inertia/force measurements; support, buoyancy and airflow audit; calibrated acceleration measurement.",
+      "observer_dropout":"Independent optical, thermal, range and other sensors with synchronized logs; occlusion and camouflage controls.",
+      "multi_instance":"Simultaneous independent authentication of each instance; synchronized clocks; continuous provenance and anti-substitution controls.",
+      "dual_presence":"Two-site synchronized recording; independent authentication at both sites; continuous provenance; timing uncertainty bounds.",
+      "remote_sensing":"Predefined scoring; randomized concealed targets; double blinding; leakage audit; enough trials for uncertainty estimation.",
+      "future_sensing":"Prediction committed before cryptographically or physically randomized target generation; synchronized timing; predefined scoring and stopping rule.",
+      "remote_acquisition":"Randomized concealed target; channel audit; blinding; access logs; predefined success criterion.",
+      "accelerated_recovery":"Operational clinical/biological endpoint; baseline trajectory; matched or randomized controls; blinded assessment where possible; time-course and uncertainty analysis."
+    }[cap]
+    st.write(protocol)
 
-if st.session_state.screen=="results":
+    st.markdown("### REPORT CONCLUSION")
+    changed=", ".join(delta) if delta else "no tracked state variables"
+    st.write(f"Under the selected parameters, the software successfully instantiated the **{spec.display_name}** model by changing **{changed}**. This establishes only internal simulation consistency. The next empirical question is whether the discriminating measurement — **{spec.separator}** — can separate the selected model from **{spec.principal_mimic}** in real observations.")
+    st.warning("SIMULATION ≠ OBSERVATION ≠ EVIDENCE. The report explains what was modeled, what was calculated, what alternative explanation matters, and what would have to be measured next.")
+
+    with st.expander("Full calculation audit"):
+        st.write("Baseline state X₀")
+        st.json(result.before.__dict__)
+        st.write("Final state X₁")
+        st.json(result.after.__dict__)
+        st.write("ΔX")
+        st.json(result.required_delta)
+        st.write("Observation supplied to inversion")
+        st.json(obs)
+        st.write("Model notes")
+        st.json(result.notes)
+
     st.markdown("---")
-    st.markdown("## Project reference")
-    r1,r2,r3=st.columns(3)
-    r1.metric("Capability models",len(CAPABILITIES))
-    r2.metric("Model families",len(set(x.family for x in CAPABILITIES)))
-    r3.metric("Benchmark","4,200 rows")
-    st.markdown("The project separates **observation → model → residual → evidence**. A successful simulation is not empirical evidence.")
-
-if st.session_state.screen=="results":
-  with st.expander("How to read a result"):
-      st.markdown("""
-**Changed state variables** = what the software altered.  
-**Known constraint** = an ordinary rule/accounting condition the scenario presses against.  
-**Ordinary mimic** = a conventional explanation capable of producing a similar observation.  
-**Discriminating observation** = a measurement intended to separate those explanations.  
-**Normalized deviation** = a model-dependent comparison number, not a probability or a power score.
-""")
-
-if st.session_state.screen=="results":
-  with st.expander("🎮 Why the game-like interface?"):
-    st.write("The visual missions are an educational interface over the same deterministic research model. Animation, icons and mission language do not add evidence or change the calculations. The purpose is to make model comparison, controls and falsification easier to explore.")
-
-if st.session_state.screen=="results":
-  with st.expander("About this project"):
-    st.write("The simulator uses project-created neutral labels and studies hypothetical capability patterns as computational models.")
-    st.write("Copyright (C) 2026 Mohammad Amir Khusru Akhtar · Apache License 2.0")
+    st.caption("Anomalous Capability Simulator · synthetic modeling environment · Copyright (C) 2026 Mohammad Amir Khusru Akhtar · Apache License 2.0")
