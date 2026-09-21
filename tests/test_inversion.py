@@ -1,22 +1,15 @@
 import unittest
-from miracle_lab.core.inversion import minimum_modification
-
+from miracle_lab.core.inversion import minimum_modification,FAMILY_BY_GX
 class TestInversion(unittest.TestCase):
-    def test_dual_presence_maps_identity_locality(self):
-        m=minimum_modification("dual_presence",{"authenticated_instances":2})
-        self.assertEqual(m.name,"identity_locality_extension")
-        self.assertEqual(m.magnitude,1)
-
-    def test_remote_sensing_maps_information(self):
-        m=minimum_modification("remote_sensing",{"information_excess_bits":16})
-        self.assertEqual(m.name,"causal_information_extension")
-
-    def test_local_emergence_maps_energy(self):
-        m=minimum_modification("local_emergence",{"mass_energy_j":8.987551787e16})
-        self.assertAlmostEqual(m.normalized_cost,1.0)
-
-    def test_instant_relocation_has_candidate(self):
-        m=minimum_modification("instant_relocation",{"distance_m":1000,"elapsed_s":1e-6})
-        self.assertIsNotNone(m)
-
+ def test_all_21_have_candidate(self):
+  self.assertEqual(len(FAMILY_BY_GX),21)
+  for gx in FAMILY_BY_GX: self.assertIsNotNone(minimum_modification(gx,{}))
+ def test_multi_location_maps_identity_locality(self):
+  self.assertEqual(minimum_modification("multi_location_identity",{}).name,"identity_locality_extension")
+ def test_remote_information_maps_spatial_information(self):
+  self.assertEqual(minimum_modification("remote_information",{}).name,"spatial_information_extension")
+ def test_local_emergence_maps_accounting(self):
+  self.assertEqual(minimum_modification("local_emergence",{}).name,"mass_energy_accounting_extension")
+ def test_path_discontinuity_has_candidate(self):
+  self.assertIsNotNone(minimum_modification("path_discontinuity",{}))
 if __name__=="__main__": unittest.main()

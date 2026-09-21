@@ -1,54 +1,32 @@
-from dataclasses import dataclass
-from typing import Dict, List, Tuple
-import math
+"""Constraint inversion for canonical 21-GX model outputs.
 
+The returned modification is a bookkeeping requirement of the stipulated
+model, not evidence that a corresponding physical mechanism exists.
+"""
+from dataclasses import dataclass
+import math
 @dataclass(frozen=True)
 class Modification:
-    name: str
-    magnitude: float
-    unit: str
-    normalized_cost: float
-
-def _norm(x: float, scale: float) -> float:
-    if not math.isfinite(x): return math.inf
-    return abs(x)/max(abs(scale),1e-30)
-
-def invert_claim(capability: str, observation: Dict[str,float]) -> List[Modification]:
-    mods=[]
-    if capability in ("instant_relocation","gap_travel"):
-        d=abs(observation.get("distance_m",0.0)); t=observation.get("elapsed_s",0.0)
-        required_speed=math.inf if t<=0 else d/t
-        mods.append(Modification("path_continuity_extension",d,"m",_norm(d,1.0)))
-        if math.isfinite(required_speed):
-            from miracle_lab.core.constraints import C
-            excess=max(0.0,required_speed-C)
-            mods.append(Modification("causal_speed_extension",excess,"m/s",_norm(excess,C)))
-    elif capability in ("dual_presence","multi_instance"):
-        n=observation.get("authenticated_instances",1.0)
-        mods.append(Modification("identity_locality_extension",max(0.0,n-1.0),"instances",_norm(max(0,n-1),1)))
-    elif capability=="unsupported_ascent":
-        f=observation.get("unsupported_force_n",0.0)
-        mods.append(Modification("force_balance_extension",f,"N",_norm(f,686.4655)))
-    elif capability=="local_emergence":
-        e=observation.get("mass_energy_j",0.0)
-        mods.append(Modification("mass_energy_accounting_extension",e,"J",_norm(e,8.987551787e16)))
-    elif capability in ("remote_sensing","future_sensing","remote_acquisition"):
-        b=observation.get("information_excess_bits",0.0)
-        mods.append(Modification("causal_information_extension",b,"bits",_norm(b,1.0)))
-    elif capability in ("microform","macroform"):
-        r=observation.get("volume_ratio",1.0)
-        mods.append(Modification("matter_geometry_extension",abs(math.log(max(r,1e-300))),"log-ratio",abs(math.log(max(r,1e-300)))))
-    elif capability=="lightform":
-        r=observation.get("effective_mass_ratio",1.0)
-        mods.append(Modification("inertial_gravitational_extension",abs(1-r),"fraction",abs(1-r)))
-    elif capability=="observer_dropout":
-        a=observation.get("observer_access",1.0)
-        mods.append(Modification("observation_coupling_extension",max(0.0,1-a),"fraction",max(0.0,1-a)))
-    elif capability=="accelerated_recovery":
-        g=observation.get("viability_gain",0.0)
-        mods.append(Modification("biological_rate_extension",g,"fraction",_norm(g,1.0)))
-    return sorted(mods,key=lambda x:x.normalized_cost)
-
-def minimum_modification(capability: str, observation: Dict[str,float]):
-    mods=invert_claim(capability,observation)
-    return mods[0] if mods else None
+ name:str; magnitude:float; unit:str; normalized_cost:float
+def _norm(x,scale=1.0):
+ return math.inf if not math.isfinite(float(x)) else abs(float(x))/max(abs(scale),1e-30)
+FAMILY_BY_GX={
+"scale_decrease":"matter_geometry_extension","scale_increase":"matter_geometry_extension",
+"mass_response_decrease":"inertial_gravitational_extension","mass_response_increase":"inertial_gravitational_extension",
+"unsupported_motion":"force_balance_extension","path_discontinuity":"path_continuity_extension",
+"barrier_transit":"boundary_relation_extension","detection_dropout":"observation_coupling_extension",
+"multiple_instances":"identity_cardinality_extension","multi_location_identity":"identity_locality_extension",
+"remote_information":"spatial_information_extension","future_information":"future_information_extension",
+"past_information":"past_information_extension","remote_acquisition":"access_channel_extension",
+"local_emergence":"mass_energy_accounting_extension","external_influence":"external_causation_extension",
+"environmental_influence":"environmental_causation_extension","accelerated_recovery":"biological_rate_extension",
+"revival":"biological_state_extension","resilience":"hazard_response_extension",
+"form_transformation":"form_identity_extension"}
+def invert_claim(capability,observation):
+ name=FAMILY_BY_GX.get(capability)
+ if name is None:return []
+ numeric=[abs(float(v)) for v in observation.values() if isinstance(v,(int,float)) and math.isfinite(float(v))]
+ magnitude=max(numeric) if numeric else 1.0
+ return [Modification(name,magnitude,"model-unit",_norm(magnitude))]
+def minimum_modification(capability,observation):
+ x=invert_claim(capability,observation); return x[0] if x else None

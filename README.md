@@ -1,167 +1,117 @@
-# Anomalous Capability Simulator
+# Anomalous Capability Simulator (ACS)
 
-A neutral computational research project for translating unusual or extraordinary capability claims into explicit world-state changes, measurable consequences, competing ordinary explanations, and falsifiable discrimination tests.
+ACS is a neutral computational laboratory for translating unusual or extraordinary capability claims into explicit observables, quantitative model consequences, competing explanations, and discriminating experiments.
 
-This project is intentionally **religion-neutral**. It does not evaluate, endorse, reject, reinterpret, rank, or reproduce the teachings of any religion or spiritual tradition. It does not claim that any extraordinary capability exists. The simulator studies abstract capability patterns as hypothetical models.
+**Scope boundary:** ACS simulates hypotheses. It does not establish that an extraordinary phenomenon exists, and its synthetic datasets are not empirical evidence.
 
-## What the simulator produces
+## Canonical 21-GX architecture
 
-For every run, the interface now explains the complete reasoning chain:
+The software uses one frozen ontology of 21 generic experiments. Tradition-specific or report-specific terms are examples nested under these generic experiments, not additional experiment classes.
 
-```
-observable scenario
-        |
-        v
-selected capability model
-        |
-        v
-baseline state X0 -> transformed state X1
-        |
-        v
-Delta X = X1 - X0
-        |
-        +--> constraint / accounting residual
-        |
-        +--> ordinary competing explanation
-        |
-        v
-discriminating measurement
-```
+| Code | Generic experiment |
+|---|---|
+| GX-01 | Scale Decrease |
+| GX-02 | Scale Increase |
+| GX-03 | Mass-Response Decrease |
+| GX-04 | Mass-Response Increase |
+| GX-05 | Unsupported Motion |
+| GX-06 | Path Discontinuity |
+| GX-07 | Barrier Transit |
+| GX-08 | Detection Dropout |
+| GX-09 | Multiple Instances |
+| GX-10 | Multi-location Identity |
+| GX-11 | Remote Information |
+| GX-12 | Future Information |
+| GX-13 | Past Information |
+| GX-14 | Remote Acquisition |
+| GX-15 | Local Emergence |
+| GX-16 | External Influence |
+| GX-17 | Environmental Influence |
+| GX-18 | Accelerated Recovery |
+| GX-19 | State Revival |
+| GX-20 | Anomalous Resilience |
+| GX-21 | Form Transformation |
 
-The application includes a visual model map, before/after/delta tables, equations for the active model, an explanation of normalized deviation, ordinary-mimic analysis, and guidance for what a real experiment would need to measure. These outputs explain the software calculation; they are not empirical observations.
-
-## Research framing
-
-Each simulated capability is represented as a state transition:
-
-```
-world_before + hypothetical_capability -> world_after + observables
-```
-
-The simulator asks:
-
-- What physical, biological, informational, perceptual, or identity variables would have to change?
-- What ordinary mechanism could reproduce the same visible outcome?
-- What observations would separate competing explanations?
-- What is the smallest model extension needed to reproduce the stipulated observation?
-- Which apparently different capabilities collapse into the same abstract mechanism family?
-
-## Neutral capability vocabulary
-
-The current benchmark uses 14 invented research labels:
-
-| Code | Neutral capability | Abstract effect |
-|---|---|---|
-| ACS-01 | Microform | Effective spatial extent decreases strongly |
-| ACS-02 | Macroform | Effective spatial extent increases strongly |
-| ACS-03 | Lightform | Effective inertial/gravitational response decreases |
-| ACS-04 | Remote Acquisition | Access/acquisition without ordinary traversal |
-| ACS-05 | Observer Dropout | Present object becomes unavailable to ordinary observation |
-| ACS-06 | Multi-Instance | Multiple authenticated instances appear simultaneously |
-| ACS-07 | Dual Presence | One identity is authenticated at separated locations |
-| ACS-08 | Gap Travel | Large displacement with an unobserved path |
-| ACS-09 | Instant Relocation | Discontinuous relocation |
-| ACS-10 | Unsupported Ascent | Upward displacement without identified support |
-| ACS-11 | Remote Sensing | Information gain without an identified ordinary signal path |
-| ACS-12 | Future Sensing | Information about a later outcome appears earlier |
-| ACS-13 | Accelerated Recovery | Recovery exceeds a specified comparison trajectory |
-| ACS-14 | Local Emergence | Local mass-energy inventory increases without an identified source |
-
-These labels are project terminology only. They are not names for religious doctrines, practices, persons, or traditions.
-
-## Abstract agent families
-
-Four neutral agent families group capabilities by the type of state transition being modeled:
-
-- **ScaleShiftAgent** — scale, extent, effective mass, and access transformations.
-- **PerceptShiftAgent** — observer coupling and multiplicity-style observation changes.
-- **PresenceShiftAgent** — identity and path-continuity transformations.
-- **BoundaryShiftAgent** — relocation, support-force, information, recovery, and local-emergence transformations.
-
-The grouping is computational convenience, not a claim about real-world ontology.
-
-## State vector
+The canonical path is:
 
 ```
-X = [
-  position, velocity, mass, volume, energy, entropy, temperature,
-  biological_viability, information_state, identity_state,
-  observer_access, causal_access, prediction_horizon,
-  sensory_access, uncertainty
-]
+generic ontology
+  -> experiment specifications
+  -> typed parameter registry
+  -> frozen mission
+  -> validated quantitative engine
+  -> evidence report
+  -> exact / greedy / adaptive / noisy CTC discrimination
 ```
 
-For capability C:
+Parameter type, unit, default and admissible range are defined once in `miracle_lab/core/parameter_specs.py` and used by the Streamlit interface. The quantitative engine independently enforces scientific domain constraints.
 
-- `Delta(C)` is the required world-state change.
-- `Sep(C)` is the minimum observation set that separates the stipulated model from competing ordinary explanations.
+## CTC experimental-design layer
+
+For each GX class, ACS represents a finite set of candidate mechanisms and candidate measurements. The deterministic layer computes an exact minimum-cost separating set and a greedy comparison; an adaptive solver computes an exact minimum worst-case-cost decision tree. The noisy layer uses explicitly synthetic Bernoulli measurement models and reports finite-sample discrimination costs at declared target accuracies.
+
+These benchmarks test algorithms and software behavior. Their costs, probabilities and signatures are synthetic design quantities, not measured properties of extraordinary phenomena.
 
 ## Synthetic benchmark
 
-The repository generates a 4,200-row benchmark:
+`scripts/generate_dataset.py` produces a deterministic software-validation dataset with:
 
-- 14 neutral capability classes
-- 3 worlds per class: baseline, ordinary mimic, stipulated simulation
-- 100 seeded trials per cell
-- 42 balanced cells total
+- 21 GX experiments;
+- three stipulated worlds per experiment: `baseline`, `mimic`, and `literal_simulation`;
+- 100 seeded trials per experiment/world cell;
+- 63 balanced cells;
+- 6,300 rows.
 
-This dataset is synthetic software-test data. It is not empirical evidence.
+See `DATASET.md` for the schema and interpretation boundary.
 
-## SWEET-1 example
+## Interactive software
 
-SWEET-1 asks a deliberately simple question:
-
-> What observations would distinguish several different explanations for a 20 g sweet appearing in a monitored chamber?
-
-The simulator compares ordinary insertion, unknown transport, local emergence, transformation, and perceptual appearance. This is a mechanism-discrimination exercise, not a claim that the simulator can create a physical sweet.
-
-## Interactive app
-
-No prior knowledge of the capability vocabulary is required. A new user can begin from an observation — for example, “an object appears,” “something moves without an observed path,” or “information seems available without an identified channel.” The app explains which model is closest, suggests example questions, defines each output, and emphasizes ordinary competing explanations.
-
-Install dependencies and launch:
+Install and launch:
 
 ```bash
 pip install -r requirements.txt
 streamlit run streamlit_app.py
 ```
 
-The app lets a user:
+The interface follows three stages:
 
-1. select a neutral capability,
-2. adjust relevant parameters,
-3. describe any hypothetical outcome,
-4. simulate the state transition,
-5. inspect required state changes,
-6. inspect model extensions and ordinary mimics,
-7. see how the result is interpreted.
+1. **Mission Briefing** — choose a generic experiment, nested example, and typed parameters.
+2. **Experiment** — freeze the mission and declare which required measurements are observed.
+3. **Evidence Report** — inspect equations, quantitative outputs, competing explanations, CTC discrimination requirements, and unresolved measurement boundaries.
 
-The app never presents a simulated result as evidence that an unusual phenomenon exists.
+A report can be resolved relative to its declared measurement set without establishing the extraordinary interpretation.
 
-### Reading an output
+## Reproducibility
 
-- **Before / after / delta** show the exact state transition performed by the program.
-- **Constraint** identifies the ordinary accounting or causal condition relevant to the stipulated transition.
-- **Model extension** is the mathematical change used by the inversion layer to reproduce the synthetic observation.
-- **Normalized deviation** is a model-dependent value based on declared reference scales; it is not a probability, confidence score, evidence strength, or ranking of real-world plausibility.
-- **Ordinary mimic** is a conventional route capable of producing a similar visible result.
-- **Discriminating observation** describes what should be measured to distinguish the stipulated model from that competing explanation.
-- **Real-experiment guidance** identifies calibration, uncertainty, provenance, timing and controls that would be required before interpreting a physical observation.
+Run the test suite and canonical generators:
 
-## Research disclaimer
+```bash
+python -m unittest discover -s tests
+python -m scripts.generate_ctc_artifacts
+python -m scripts.verify_ctc_artifacts
+python -m scripts.generate_dataset
+python -m scripts.audit_dataset
+python -m scripts.run_inversion
+python -m scripts.analyze_mechanism_clusters
+python -m scripts.find_minimal_basis
+```
 
-This repository is a computational modeling and software-validation project for hypothetical unusual-capability scenarios. It does not claim that any simulated capability exists in the physical world, and simulation output must not be treated as empirical evidence.
+The CI workflow repeats the principal checks and uploads generated audit artifacts. CTC artifacts include a manifest with SHA-256 hashes.
 
-The project studies **hypotheses as models**: state transitions, measurable consequences, competing explanations, and discriminating tests. Project-created capability names are abstract technical labels and are not intended to identify or evaluate any cultural, philosophical, or belief system.
+## Interpretation rules
 
-The software is not a medical device or diagnostic system and should not be used for medical decisions.
+Physical units are used only when the modeled quantity has a defined physical unit. Dimensionless scores are explicitly bounded where appropriate, and abstract quantities remain labeled as model units rather than being assigned invented physical meaning. In particular, the local-emergence `E_eq = Δmc²` output is rest-mass-equivalent accounting, not a claim of measured released energy; mass-response experiments do not silently change rest mass; and prediction horizon is a time quantity, not information bits.
+
+## Research and safety boundary
+
+ACS is computational research software for hypothetical scenarios. It does not adjudicate religious, spiritual, philosophical, or metaphysical truth claims. Descriptive examples do not constitute evidence. The software is not a medical device and must not be used for medical diagnosis or treatment decisions.
 
 ## License
 
-Copyright (C) 2026 Mohammad Amir Khusru Akhtar
+Copyright (C) 2026 Mohammad Amir Khusru Akhtar.
 
-Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE).
+Licensed under the Apache License, Version 2.0. See `LICENSE`.
 
 ## Citation / attribution
 
-If you use the simulator in research, please cite the repository and clearly state that its datasets and extraordinary-capability outputs are synthetic.
+If you use ACS in research, cite the repository and state explicitly that its benchmark datasets and extraordinary-capability outputs are synthetic.

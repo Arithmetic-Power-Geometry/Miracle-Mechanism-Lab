@@ -1,45 +1,39 @@
 import unittest
 from pathlib import Path
 try:
-    from streamlit.testing.v1 import AppTest
-except Exception:
-    AppTest=None
+ from streamlit.testing.v1 import AppTest
+except Exception: AppTest=None
 
 @unittest.skipIf(AppTest is None,"streamlit not installed")
 class TestStreamlitApp(unittest.TestCase):
-    def app(self):
-        p=Path(__file__).resolve().parents[1] / "streamlit_app.py"
-        at=AppTest.from_file(str(p)); at.run(timeout=20)
-        self.assertFalse(at.exception); return at
-
-    def test_entry(self):
-        at=self.app()
-        self.assertEqual(at.selectbox[0].label,"What are you curious about?")
-        self.assertEqual(at.button[0].label,"ENTER EXPERIMENT →")
-
-    def test_each_scenario_locks_correct_model(self):
-        at=self.app()
-        expected=[
-          ("A 20 g sweet appears in a monitored chamber","ACS-14"),
-          ("An object appears in a monitored chamber","ACS-14"),
-          ("An object changes position with no observed intermediate path","ACS-09"),
-          ("A journey contains a large unobserved segment","ACS-08"),
-          ("An object rises without an identified support","ACS-10"),
-          ("An object becomes dramatically smaller","ACS-01"),
-          ("An object becomes dramatically larger","ACS-02"),
-          ("An object behaves as if its effective mass is much lower","ACS-03"),
-          ("A present object stops being detected","ACS-05"),
-          ("Several matching instances appear at once","ACS-06"),
-          ("The same identity appears at separated locations","ACS-07"),
-          ("Information appears without an identified ordinary channel","ACS-11"),
-          ("Information appears before the later outcome","ACS-12"),
-          ("Something is accessed without an observed route","ACS-04"),
-          ("Recovery is unusually fast","ACS-13"),
-        ]
-        for scenario,code in expected:
-            at.selectbox[0].select(scenario).run(timeout=20)
-            self.assertFalse(at.exception)
-            self.assertIn(code,at.markdown[-3].value if len(at.markdown)>=3 else " ".join(x.value for x in at.markdown))
-
-if __name__=="__main__":
-    unittest.main()
+ def app(self):
+  p=Path(__file__).resolve().parents[1]/"streamlit_app.py"
+  at=AppTest.from_file(str(p)); at.run(timeout=30); self.assertFalse(at.exception); return at
+ def test_canonical_entry(self):
+  at=self.app(); self.assertEqual(at.selectbox[0].label,"Generic Experiment")
+  self.assertEqual(len(at.selectbox[0].options),21); self.assertEqual(at.button[0].label,"ENTER EXPERIMENT →")
+ def test_all_21_select_cleanly(self):
+  at=self.app()
+  for option in at.selectbox[0].options:
+   at.selectbox[0].select(option).run(timeout=30); self.assertFalse(at.exception)
+   self.assertEqual(at.selectbox[1].label,"Example / tradition-neutral report")
+ def test_all_21_execute_to_evidence_report(self):
+  seed=self.app(); options=list(seed.selectbox[0].options)
+  self.assertEqual(len(options),21)
+  for option in options:
+   at=self.app()
+   at.selectbox[0].select(option).run(timeout=30); self.assertFalse(at.exception)
+   enter=next(b for b in at.button if b.label=="ENTER EXPERIMENT →")
+   enter.click().run(timeout=30); self.assertFalse(at.exception)
+   text=" ".join(x.value for x in at.markdown); self.assertIn("02 // EXPERIMENT",text)
+   execute=next(b for b in at.button if b.label=="▶ EXECUTE FROZEN EXPERIMENT")
+   execute.click().run(timeout=30); self.assertFalse(at.exception)
+   text=" ".join(x.value for x in at.markdown)
+   self.assertIn("03 // EVIDENCE REPORT",text)
+   self.assertIn("Resolution boundary",text)
+   self.assertTrue(any("not empirical effect estimates" in x.value for x in at.caption))
+ def test_first_experiment_enters_frozen_stage(self):
+  at=self.app(); at.button[0].click().run(timeout=30); self.assertFalse(at.exception)
+  text=" ".join(x.value for x in at.markdown); self.assertIn("02 // EXPERIMENT",text)
+  self.assertIn("Frozen example",text)
+if __name__=="__main__": unittest.main()
