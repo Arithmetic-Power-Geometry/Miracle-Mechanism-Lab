@@ -44,7 +44,7 @@ class TestStreamlitApp(unittest.TestCase):
     def test_each_scenario_preview_contains_its_own_visual_and_data(self):
         at=self.app()
         checks=[
-          ("A 20 g sweet appears in a monitored chamber","LOCAL INVENTORY EVENT","0.02 kg"),
+          ("A 20 g sweet appears in a monitored chamber","CHAMBER SEALED","0.02 kg"),
           ("An object changes position with no observed intermediate path","SOURCE A","1000 m"),
           ("An object rises without an identified support","VERTICAL Z","1 m"),
           ("An object becomes dramatically smaller","REDUCED SCALE","1e-06"),
