@@ -6,6 +6,6 @@ class TestStreamlit21Contract(unittest.TestCase):
  def test_three_stages(self):
   for x in ("01 // MISSION BRIEFING","02 // EXPERIMENT","03 // EVIDENCE REPORT"): self.assertIn(x,self.src)
  def test_ctc_dashboard(self):
-  for x in ("Minimum separating set","Exact fixed cost","Greedy fixed cost","Deterministic adaptive worst-case cost","Noisy 90% max pair cost","Adaptive noisy first measurement"): self.assertIn(x,self.src)
+  for x in ("Minimum separating set","Exact fixed cost","Greedy fixed cost","Deterministic adaptive worst-case cost","Noisy {int(acc*100)}% max pair cost","Adaptive noisy first measurement"): self.assertIn(x,self.src)
  def test_synthetic_boundary_visible(self): self.assertIn("not empirical effect estimates",self.src)
 if __name__=="__main__": unittest.main()
