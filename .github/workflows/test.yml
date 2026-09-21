@@ -19,6 +19,10 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Streamlit syntax check
         run: python -m py_compile streamlit_app.py streamlit_21.py
+      - name: Canonical baseline smoke test
+        run: python run_baseline.py > /tmp/acs-baseline.txt
+      - name: Architecture alignment audit
+        run: python -c "from miracle_lab.core.architecture_audit import architecture_audit; a=architecture_audit(); assert a['canonical_experiments']==21 and a['aligned'] and a['parameter_registry_valid'] and not a['legacy_is_canonical']"
       - name: Generate CTC reproducibility artifacts
         run: python -m scripts.generate_ctc_artifacts
       - name: Verify CTC artifact manifest
