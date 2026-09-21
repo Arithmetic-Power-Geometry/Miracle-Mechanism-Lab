@@ -37,13 +37,27 @@ def _positive(x,name,allow_zero=False):
  x=float(x)
  if (x<0 if allow_zero else x<=0) or not math.isfinite(x): raise ValueError(f"{name} outside valid domain")
  return x
+def _unit_interval(x,name):
+ x=float(x)
+ if not math.isfinite(x) or not 0<=x<=1: raise ValueError(f"{name} must be in [0,1]")
+ return x
+
+def _integer(x,name,minimum=1):
+ y=float(x)
+ if not math.isfinite(y) or not y.is_integer() or y<minimum: raise ValueError(f"{name} must be an integer >= {minimum}")
+ return int(y)
+
 def execute(key,params=None):
  if key not in SPECS: raise KeyError(key)
  p={**DEFAULTS[key],**(params or {})}; o={}; eq=(); note=""
  if key.startswith("scale_"):
-  r=_positive(p["scale_ratio"],"scale_ratio"); o={"linear_ratio":r,"volume_ratio":r**3}; eq=("L1/L0=s","V1/V0=s^3"); note="Geometric scaling only; mass conservation is not assumed."
+  r=_positive(p["scale_ratio"],"scale_ratio");
+  if (key=="scale_decrease" and r>=1) or (key=="scale_increase" and r<=1): raise ValueError("scale_ratio inconsistent with experiment direction")
+  o={"linear_ratio":r,"volume_ratio":r**3}; eq=("L1/L0=s","V1/V0=s^3"); note="Geometric scaling only; mass conservation is not assumed."
  elif key.startswith("mass_response_"):
-  r=_positive(p["response_ratio"],"response_ratio"); o={"response_ratio":r}; eq=("r=F1/F0",); note="Response ratio is not a change in rest mass."
+  r=_positive(p["response_ratio"],"response_ratio");
+  if (key=="mass_response_decrease" and r>=1) or (key=="mass_response_increase" and r<=1): raise ValueError("response_ratio inconsistent with experiment direction")
+  o={"response_ratio":r}; eq=("r=F1/F0",); note="Response ratio is not a change in rest mass."
  elif key=="unsupported_motion":
   d=_positive(p["displacement"],"displacement",True); t=_positive(p["elapsed_time"],"elapsed_time"); o={"mean_speed_m_s":d/t}; eq=("v=d/Δt","F_net=ma"); note="Motion alone does not identify the force source."
  elif key=="path_discontinuity":
@@ -55,29 +69,29 @@ def execute(key,params=None):
   if not 0<=C<=1: raise ValueError("coverage must be in [0,1]")
   o={"audited_thickness_m":b,"unobserved_fraction":1-C}; eq=("U=1-C",); note="Barrier integrity and continuous identity tracking are required."
  elif key=="detection_dropout":
-  n=_positive(p["sensor_modalities"],"sensor_modalities"); o={"audited_modalities":n}; eq=("D=(D1,...,Dn)",); note="Sensor dropout is not object disappearance."
+  n=_integer(p["sensor_modalities"],"sensor_modalities"); o={"audited_modalities":n}; eq=("D=(D1,...,Dn)",); note="Sensor dropout is not object disappearance."
  elif key=="multiple_instances":
-  n=int(_positive(p["instance_count"],"instance_count")); o={"simultaneous_instances":n,"identity_excess":max(0,n-1)}; eq=("X=N_auth-1",); note="Each instance requires independent authentication."
+  n=_integer(p["instance_count"],"instance_count"); o={"simultaneous_instances":n,"identity_excess":max(0,n-1)}; eq=("X=N_auth-1",); note="Each instance requires independent authentication."
  elif key=="multi_location_identity":
   d=_positive(p["site_separation"],"site_separation",True); q=_positive(p["clock_tolerance"],"clock_tolerance"); o={"separation_m":d,"clock_tolerance_s":q}; eq=("A≠B","|tA-tB|≤τ"); note="Simultaneity depends on authenticated identity and clock tolerance."
  elif key in ("remote_information","past_information"):
-  k=_positive(p["target_space"],"target_space"); o={"chance_accuracy":1.0/k}; eq=("p0=1/K",); note="Observed accuracy requires a prespecified statistical test; chance rate alone is not evidence."
+  k=_integer(p["target_space"],"target_space",2); o={"chance_accuracy":1.0/k}; eq=("p0=1/K",); note="Observed accuracy requires a prespecified statistical test; chance rate alone is not evidence."
  elif key=="future_information":
   h=_positive(p["prediction_horizon"],"prediction_horizon",True); n=_positive(p["trials"],"trials"); o={"prediction_horizon_s":h,"trials":n}; eq=("t_response<t_target",); note="Target generation must occur after a committed prediction."
  elif key=="remote_acquisition":
-  d=_positive(p["target_distance"],"target_distance",True); a=float(p["channel_audit"]); o={"target_distance_m":d,"channel_audit":a}; eq=("A_local>0 with audited ordinary channel=0",); note="Access and information transfer are distinct from object transport."
+  d=_positive(p["target_distance"],"target_distance",True); a=_unit_interval(p["channel_audit"],"channel_audit"); o={"target_distance_m":d,"channel_audit":a}; eq=("A_local>0 with audited ordinary channel=0",); note="Access and information transfer are distinct from object transport."
  elif key=="local_emergence":
   dm=_positive(p["mass_delta"],"mass_delta",True); o={"mass_delta_kg":dm,"rest_mass_equivalent_j":dm*299792458.0**2}; eq=("Δm=m1-m0","E_eq=Δmc²"); note="E_eq is accounting only; it is not measured released energy."
  elif key in ("external_influence","environmental_influence"):
-  effect=float(p["effect_size"] if key=="external_influence" else p["field_change"]); controls=_positive(p["controls"],"controls"); o={"declared_effect":effect,"control_count":controls}; eq=("ΔY=Y_intervention-Y_control",); note="Causal attribution requires randomized or otherwise justified controls."
+  effect=float(p["effect_size"] if key=="external_influence" else p["field_change"]); controls=_integer(p["controls"],"controls"); o={"declared_effect":effect,"control_count":controls}; eq=("ΔY=Y_intervention-Y_control",); note="Causal attribution requires randomized or otherwise justified controls."
  elif key=="accelerated_recovery":
-  b=float(p["baseline"]); y=float(p["trajectory"]); c=float(p["control"]); o={"test_change":y-b,"control_change":c-b,"difference_in_change":y-c}; eq=("Δr=(Y1-Y0)-(C1-C0)",); note="Endpoint definition, baseline comparability and time course must be prespecified."
+  b=_unit_interval(p["baseline"],"baseline"); y=_unit_interval(p["trajectory"],"trajectory"); c=_unit_interval(p["control"],"control"); o={"test_change":y-b,"control_change":c-b,"difference_in_change":y-c}; eq=("Δr=(Y1-Y0)-(C1-C0)",); note="Endpoint definition, baseline comparability and time course must be prespecified."
  elif key=="revival":
-  t=_positive(p["elapsed_time"],"elapsed_time"); confirm=float(p["independent_confirmation"]); o={"elapsed_s":t,"confirmation_score":confirm}; eq=("S(t0)=0→S(t1)=1",); note="The state criterion must be operationally defined; the simulator does not define death."
+  t=_positive(p["elapsed_time"],"elapsed_time"); confirm=_unit_interval(p["independent_confirmation"],"independent_confirmation"); o={"elapsed_s":t,"confirmation_score":confirm}; eq=("S(t0)=0→S(t1)=1",); note="The state criterion must be operationally defined; the simulator does not define death."
  elif key=="resilience":
   h=float(p["hazard"]); d=_positive(p["dose"],"dose",True); r=float(p["response"]); o={"hazard_level":h,"dose":d,"response":r}; eq=("R=f(hazard,dose,time)",); note="Exposure verification and protection controls are essential."
  elif key=="form_transformation":
-  g0=_positive(p["geometry_before"],"geometry_before"); g1=_positive(p["geometry_after"],"geometry_after"); ident=float(p["identity_audit"]); o={"geometry_ratio":g1/g0,"identity_audit":ident}; eq=("G1/G0","I0=I1 must be independently authenticated"); note="Geometry change and identity continuity are separate propositions."
+  g0=_positive(p["geometry_before"],"geometry_before"); g1=_positive(p["geometry_after"],"geometry_after"); ident=_unit_interval(p["identity_audit"],"identity_audit"); o={"geometry_ratio":g1/g0,"identity_audit":ident}; eq=("G1/G0","I0=I1 must be independently authenticated"); note="Geometry change and identity continuity are separate propositions."
  return ExecutionResult(key,SPECS[key].code,p,o,eq,note)
 
 def validate_all_defaults():
