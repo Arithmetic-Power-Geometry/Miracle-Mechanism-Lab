@@ -14,7 +14,7 @@ class TestEndToEnd21(unittest.TestCase):
    unresolved=build_report(result,())
    self.assertEqual(unresolved.resolution_status,"UNRESOLVED")
    resolved=build_report(result,s.measurements)
-   self.assertEqual(resolved.resolution_status,"RESOLVED_FOR_DECLARED_MEASUREMENTS")
+   self.assertEqual(resolved.resolution_status,"MECHANISMS_SEPARATED_IN_SYNTHETIC_BENCHMARK")
    self.assertIn(key,V)
    self.assertTrue(result.outputs)
    self.assertTrue(result.boundary)
