@@ -75,3 +75,29 @@ Every mission should return candidate mechanisms, current equivalence classes, a
 Atkinson & Cox (1974), *Planning Experiments for Discriminating between Models*; Atkinson & Fedorov (1975), *Optimal Design: Experiments for Discriminating between Several Models*; later T-optimal, KL-optimal and Bayesian discriminating-design literature; contemporary optimal experiment design for practical identifiability and model discrimination.
 
 The paper must position CTC as an application/formalization layer over these foundations, not as their replacement.
+
+
+## Stress-test obligations before manuscript freeze
+
+The implementation must survive adversarial cases, not merely examples constructed to be separable:
+
+- **Irreducible equivalence:** distinct mechanisms have identical signatures under every admissible measurement; the correct output is unresolved with (ESC=\infty).
+- **Admissibility obstruction:** a separating probe exists mathematically but is forbidden; the admissible problem remains unresolved.
+- **Greedy trap:** a locally attractive cost/coverage choice need not be globally optimal; exact search is the finite-benchmark reference.
+- **Redundancy:** a more expensive measurement with an identical separation signature must never be selected over its cheaper equivalent.
+
+### Proposition 4 — admissibility can destroy resolvability
+Let (\mathcal E'\subseteq\mathcal E) be the admissible subset. A mechanism pair may be separable in (\mathcal E) yet observationally equivalent in (\mathcal E'). Therefore feasibility of identification is relative to the admissible experiment set, not merely to the existence of a mathematically separating observation.
+
+This proposition is elementary in the present finite formulation. Its value here is architectural: CTC must report **unresolved because no admissible separator exists**, rather than treating an unavailable/unsafe/forbidden measurement as evidence.
+
+## Manuscript readiness gate
+
+Do not freeze a paper merely because the simulator runs. A research manuscript should begin in parallel now, but results/conclusions should be frozen only after:
+
+1. all 14 benchmark instances and adversarial stress cases pass reproducibly;
+2. exact solutions and baseline comparisons are generated as committed artifacts;
+3. the noisy/probabilistic extension is specified and tested, or the paper explicitly limits itself to deterministic finite CTC;
+4. a systematic prior-art matrix distinguishes CTC from model-discrimination design, active hypothesis testing, diagnosis, causal experiment design, observability, identifiability and set-cover formulations;
+5. at least one nontrivial result beyond direct set-cover reduction is established, or the paper is deliberately positioned as a framework/software/benchmark contribution rather than a new optimization theory;
+6. claims of novelty are rewritten to match what survives that audit.
