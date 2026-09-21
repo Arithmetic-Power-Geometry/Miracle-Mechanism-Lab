@@ -6,6 +6,7 @@ public interface.
 """
 import streamlit as st
 from miracle_lab.core.ui_catalogue import UI_EXPERIMENTS,DISPLAY_TO_KEY
+from miracle_lab.core.generic_engine import DEFAULTS,execute
 
 st.set_page_config(page_title="ACS · 21 Experiment Lab",page_icon="🧪",layout="wide")
 st.title("Anomalous Capability Simulator (ACS)")
@@ -21,7 +22,12 @@ st.write(f"**Selected example:** {example}")
 st.write(f"**Mathematical signature:** `{spec.mathematics}`")
 
 st.markdown("### Parameters to operationalize")
-for p in spec.parameters: st.text_input(p.replace("_"," ").title(),key=f"gx_{key}_{p}")
+for p in spec.parameters:
+ default=DEFAULTS[key][p]
+ if isinstance(default,(int,float)):
+  st.number_input(p.replace("_"," ").title(),value=float(default),key=f"gx_{key}_{p}")
+ else:
+  st.text_input(p.replace("_"," ").title(),value=str(default),key=f"gx_{key}_{p}")
 
 st.markdown("### Required measurements")
 st.write(" · ".join(spec.measurements))
