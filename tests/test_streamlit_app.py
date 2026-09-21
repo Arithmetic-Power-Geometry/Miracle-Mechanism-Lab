@@ -16,6 +16,7 @@ class TestStreamlitApp(unittest.TestCase):
         self.assertGreaterEqual(len(at.text_input),1)
         self.assertEqual(at.selectbox[0].label,"What are you curious about?")
         self.assertGreaterEqual(len(at.button),1)
+        self.assertEqual(at.button[0].label,"🚀 Launch investigation")
 
 if __name__=="__main__":
     unittest.main()
