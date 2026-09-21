@@ -19,6 +19,8 @@ jobs:
         run: python scripts/generate_dataset.py
       - name: Audit dataset
         run: python scripts/audit_dataset.py
+      - name: Constraint inversion
+        run: python scripts/run_inversion.py
       - name: Upload audit artifacts
         uses: actions/upload-artifact@v4
         if: always()
