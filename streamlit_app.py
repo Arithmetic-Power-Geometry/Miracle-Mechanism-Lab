@@ -27,7 +27,8 @@ h1,h2,h3,h4,p,span,label {color:inherit;}
 .hero h1 {margin:0; font-size:2.1rem;}
 .hero p {opacity:.88; margin:.35rem 0 0 0;}
 .card {border:1px solid #e5e7eb; border-radius:14px; padding:1rem; background:white;}
-.small {font-size:.9rem; opacity:.8;}\n.flowbox {border:1px solid #d1d5db; border-radius:16px; padding:1rem; text-align:center; font-weight:600; min-height:82px;}
+.small {font-size:.9rem; opacity:.8;}
+.flowbox {border:1px solid #d1d5db; border-radius:16px; padding:1rem; text-align:center; font-weight:600; min-height:82px;}
 .game-scene {position:relative; overflow:hidden; min-height:270px; border-radius:24px; padding:24px; background:linear-gradient(160deg,#0f172a,#1e293b); color:white; border:1px solid #334155; box-shadow:0 14px 38px rgba(15,23,42,.22);}
 .game-title {font-size:1rem; opacity:.72; letter-spacing:.12em; font-weight:700;}
 .game-object {font-size:76px; text-align:center; margin:20px 0 6px 0; animation:floaty 2.4s ease-in-out infinite;}
@@ -170,7 +171,9 @@ if "capability_label" not in st.session_state:
 def apply_scenario():
     text=st.session_state.scenario_picker
     if text in SCENARIOS:
-        cap_name,defaults=SCENARIOS[text]\n        st.session_state.capability_label=cap_to_label[cap_name]\n        st.session_state.active_preview_cap=cap_name
+        cap_name,defaults=SCENARIOS[text]
+        st.session_state.capability_label=cap_to_label[cap_name]
+        st.session_state.active_preview_cap=cap_name
         st.session_state.scenario_text=text
         for key,value in defaults.items():
             st.session_state[f"param_{key}"]=value
