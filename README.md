@@ -4,6 +4,32 @@ A neutral computational research project for translating unusual or extraordinar
 
 This project is intentionally **religion-neutral**. It does not evaluate, endorse, reject, reinterpret, rank, or reproduce the teachings of any religion or spiritual tradition. It does not claim that any extraordinary capability exists. The simulator studies abstract capability patterns as hypothetical models.
 
+## What the simulator produces
+
+For every run, the interface now explains the complete reasoning chain:
+
+```
+observable scenario
+        |
+        v
+selected capability model
+        |
+        v
+baseline state X0 -> transformed state X1
+        |
+        v
+Delta X = X1 - X0
+        |
+        +--> constraint / accounting residual
+        |
+        +--> ordinary competing explanation
+        |
+        v
+discriminating measurement
+```
+
+The application includes a visual model map, before/after/delta tables, equations for the active model, an explanation of normalized deviation, ordinary-mimic analysis, and guidance for what a real experiment would need to measure. These outputs explain the software calculation; they are not empirical observations.
+
 ## Research framing
 
 Each simulated capability is represented as a state transition:
@@ -110,7 +136,17 @@ The app lets a user:
 6. inspect model extensions and ordinary mimics,
 7. see how the result is interpreted.
 
-The app never presents a simulated result as evidence that an extraordinary phenomenon exists.
+The app never presents a simulated result as evidence that an unusual phenomenon exists.
+
+### Reading an output
+
+- **Before / after / delta** show the exact state transition performed by the program.
+- **Constraint** identifies the ordinary accounting or causal condition relevant to the stipulated transition.
+- **Model extension** is the mathematical change used by the inversion layer to reproduce the synthetic observation.
+- **Normalized deviation** is a model-dependent value based on declared reference scales; it is not a probability, confidence score, evidence strength, or ranking of real-world plausibility.
+- **Ordinary mimic** is a conventional route capable of producing a similar visible result.
+- **Discriminating observation** describes what should be measured to distinguish the stipulated model from that competing explanation.
+- **Real-experiment guidance** identifies calibration, uncertainty, provenance, timing and controls that would be required before interpreting a physical observation.
 
 ## Research disclaimer
 
