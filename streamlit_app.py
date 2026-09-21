@@ -170,8 +170,7 @@ if "capability_label" not in st.session_state:
 def apply_scenario():
     text=st.session_state.scenario_picker
     if text in SCENARIOS:
-        cap_name,defaults=SCENARIOS[text]
-        st.session_state.capability_label=cap_to_label[cap_name]
+        cap_name,defaults=SCENARIOS[text]\n        st.session_state.capability_label=cap_to_label[cap_name]\n        st.session_state.active_preview_cap=cap_name
         st.session_state.scenario_text=text
         for key,value in defaults.items():
             st.session_state[f"param_{key}"]=value
@@ -180,7 +179,7 @@ def apply_scenario():
 
 def scene_animation(cap,scenario,phase="experiment"):
     icon,arena,title,sub=VISUALS[cap]
-    if cap=="local_emergence" and "sweet" in scenario.lower(): icon="🍬"
+    if cap=="local_emergence": icon="🍬" if "sweet" in scenario.lower() else "📦"
     cfg={
       "local_emergence":("emerge","EMPTY CHAMBER","LOCAL INVENTORY EVENT","Object appears at monitored center; no A→B travel is modeled."),
       "instant_relocation":("teleport","SOURCE A","DESTINATION B","Object state switches from A to B with no modeled intermediate path."),
@@ -228,7 +227,7 @@ def scene_animation(cap,scenario,phase="experiment"):
     }[cap]
     st.markdown(f"""
     <div class="game-scene stage">
-      <div class="hud"><div class="hudline"><span><span class="statusdot"></span>{phase_label}</span><span>{arena}</span></div></div>
+      <div class="hud"><div class="hudline"><span><span class="statusdot"></span>{phase_label} · {BY_NAME[cap].code}</span><span>{arena}</span></div></div>
       <div class="stage-grid"></div><div class="coord c1">CAM-01 · LOCK</div><div class="coord c2">SENSOR BUS · LIVE</div>
       {endpoint_html}
       <div class="actor {klass}">{icon}</div>
