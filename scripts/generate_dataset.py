@@ -29,9 +29,13 @@ for cap,var,mimic in CAPS:
             force=70.0*9.80665 if cap=="levitation" and world=="literal_simulation" else 0.0
             info=16.0 if cap in ("clairvoyance","precognition","prapti") and world=="literal_simulation" else 0.0
             identities=2.0 if cap in ("bilocation","multiplication") and world=="literal_simulation" else 1.0
-            rows.append([trial,cap,var,world,mimic,target,alt,distance,elapsed,mass_delta,energy,force,info,identities,20260921+rep])
+            volume_ratio = (1e-6 if cap=="anima" and world=="literal_simulation" else (1e6 if cap=="mahima" and world=="literal_simulation" else 1.0))
+            effective_mass_ratio = 1e-6 if cap=="laghima" and world=="literal_simulation" else 1.0
+            observer_access = 0.0 if cap=="disappearance" and world=="literal_simulation" else 1.0
+            viability_gain = 0.5 if cap=="healing" and world=="literal_simulation" else 0.0
+            rows.append([trial,cap,var,world,mimic,target,alt,distance,elapsed,mass_delta,energy,force,info,identities,volume_ratio,effective_mass_ratio,observer_access,viability_gain,20260921+rep])
 
-header=["trial_id","capability","primary_residual","world","principal_mimic","target_signal","mimic_signal","distance_m","elapsed_s","delta_mass_kg","mass_energy_j","unsupported_force_n","information_excess_bits","authenticated_instances","seed"]
+header=["trial_id","capability","primary_residual","world","principal_mimic","target_signal","mimic_signal","distance_m","elapsed_s","delta_mass_kg","mass_energy_j","unsupported_force_n","information_excess_bits","authenticated_instances","volume_ratio","effective_mass_ratio","observer_access","viability_gain","seed"]
 with open(OUT/"synthetic_claim_trials.csv","w",newline="",encoding="utf-8") as f:
     w=csv.writer(f); w.writerow(header); w.writerows(rows)
 print(f"wrote {len(rows)} rows")
