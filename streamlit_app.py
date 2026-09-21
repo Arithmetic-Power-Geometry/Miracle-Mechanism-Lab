@@ -245,21 +245,37 @@ if st.session_state.screen=="briefing":
     st.markdown('<div class="hud"><div class="hudline"><span>SELECT FIELD EVENT</span><span>INPUT CONSOLE</span></div><div class="objective"><b>OBJECTIVE:</b> Choose what you want to investigate. The next screen becomes a dedicated experimental environment for that choice.</div></div>',unsafe_allow_html=True)
     st.markdown("### SELECT MISSION")
     scenario_choice=st.selectbox("What are you curious about?",list(SCENARIOS),key="scenario_picker",on_change=apply_scenario,label_visibility="collapsed")
-    scenario=st.text_input("Mission description",key="scenario_text",placeholder="Describe the event you want to investigate...")
-    selected_label=st.selectbox("Model",list(labels),key="capability_label")
-    cap=labels[selected_label]; spec=BY_NAME[cap]
+    # Synchronize immediately on every rerun, not only through a widget callback.
+    cap,defaults=SCENARIOS[scenario_choice]
+    st.session_state.capability_label=cap_to_label[cap]
+    st.session_state.scenario_text=scenario_choice
+    for key,value in defaults.items():
+        if st.session_state.get("active_scenario") != scenario_choice:
+            st.session_state[f"param_{key}"]=value
+    st.session_state.active_scenario=scenario_choice
+    scenario=scenario_choice
+    spec=BY_NAME[cap]
+    st.markdown(f"**Automatically selected model:** {spec.code} · {spec.display_name}")
+    st.caption("The model is locked to the chosen mission so Stage 1, Stage 2 and Stage 3 cannot drift to a different experiment.")
     st.markdown(f'<div class="hud"><div class="hudline"><span>MISSION {spec.code}</span><span>{VISUALS[cap][1]}</span></div><div class="objective"><b>OBJECTIVE:</b> {GUIDE[cap][0]}</div></div>',unsafe_allow_html=True)
     render_game_scene(cap,scenario)
     if st.button("ENTER EXPERIMENT →",type="primary",use_container_width=True):
+        st.session_state.active_cap=cap
+        st.session_state.active_scenario=scenario
+        st.session_state.active_spec_code=spec.code
         st.session_state.screen="experiment"; st.rerun()
 
 elif st.session_state.screen=="experiment":
-    selected_label=st.session_state.capability_label
-    cap=labels[selected_label]; spec=BY_NAME[cap]; scenario=st.session_state.scenario_text
+    cap=st.session_state.active_cap
+    spec=BY_NAME[cap]
+    scenario=st.session_state.active_scenario
     top1,top2=st.columns([1,4])
     with top1:
         if st.button("← BRIEFING",use_container_width=True):
-            st.session_state.screen="briefing"; st.rerun()
+            st.session_state.screen="briefing"
+            st.session_state.pop("active_cap",None)
+            st.session_state.pop("executed_cap",None)
+            st.rerun()
     with top2:
         st.markdown(f"## 02 // {VISUALS[cap][1]} · {spec.code}")
     scene_animation(cap,scenario)
@@ -289,14 +305,17 @@ elif st.session_state.screen=="experiment":
         kwargs["delta_mass_kg"]=st.number_input("Object mass / local increase (kg)",min_value=0.0,value=float(st.session_state.get("param_delta_mass_kg",0.020)),format="%.6f")
     st.caption("All mission defaults are editable. The animation follows the model family; the numerical engine uses these values.")
     if st.button("▶ EXECUTE EXPERIMENT",type="primary",use_container_width=True):
-        st.session_state.last_kwargs=kwargs
+        st.session_state.last_kwargs=dict(kwargs)
+        st.session_state.executed_cap=cap
+        st.session_state.executed_scenario=scenario
         st.session_state.screen="results"
         st.rerun()
 
 elif st.session_state.screen=="results":
-    selected_label=st.session_state.capability_label
-    cap=labels[selected_label]; spec=BY_NAME[cap]; scenario=st.session_state.scenario_text
-    kwargs=st.session_state.get("last_kwargs",{})
+    cap=st.session_state.executed_cap
+    spec=BY_NAME[cap]
+    scenario=st.session_state.executed_scenario
+    kwargs=dict(st.session_state.get("last_kwargs",{}))
     if st.button("← RUN AGAIN"):
         st.session_state.screen="experiment"; st.rerun()
 
