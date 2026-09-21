@@ -1,65 +1,127 @@
-# Miracle-Mechanism-Lab
+# Anomalous Capability Simulator
 
-A computational laboratory for decomposing and simulating extraordinary claims from siddhi, iddhi, karamat, and broader miracle traditions as explicit agent capabilities, mechanisms, observable consequences, and discriminating tests.
+A neutral computational research project for translating unusual or extraordinary capability claims into explicit world-state changes, measurable consequences, competing ordinary explanations, and falsifiable discrimination tests.
 
-The repository does not assume that any supernatural claim is true or false. Its purpose is to ask: if a claimed power were real, what variables would have to change, what constraints would it affect, what observable signature would it leave, and what ordinary mechanisms could imitate the same observation?
+This project is intentionally **religion-neutral**. It does not evaluate, endorse, reject, reinterpret, rank, or reproduce the teachings of any religion or spiritual tradition. It does not claim that any extraordinary capability exists. The simulator studies abstract capability patterns as hypothetical models.
 
-## Core idea
+## Research framing
 
-We construct four separate agent families:
+Each simulated capability is represented as a state transition:
 
-- SiddhiAgent — classical yogic/Hindu siddhi-style capability claims.
-- IddhiAgent — Buddhist iddhi-style capability claims.
-- KaramatAgent — Sufi karamat-style extraordinary-event claims.
-- MiracleAgent — cross-tradition miracle claims.
+```
+world_before + hypothetical_capability -> world_after + observables
+```
 
-Each capability is represented as a state transition:
+The simulator asks:
 
-world_before + agent_action -> world_after + observables
+- What physical, biological, informational, perceptual, or identity variables would have to change?
+- What ordinary mechanism could reproduce the same visible outcome?
+- What observations would separate competing explanations?
+- What is the smallest model extension needed to reproduce the stipulated observation?
+- Which apparently different capabilities collapse into the same abstract mechanism family?
 
-Every extraordinary transition is tested against competing explanatory worlds:
+## Neutral capability vocabulary
 
-1. ordinary physical mechanism
-2. biological/physiological mechanism
-3. cognitive/perceptual mechanism
-4. information leakage or hidden cue
-5. coincidence/statistical selection
-6. deception or measurement error
-7. unknown natural mechanism
-8. literal claimed mechanism
+The current benchmark uses 14 invented research labels:
 
-## What values change?
+| Code | Neutral capability | Abstract effect |
+|---|---|---|
+| ACS-01 | Microform | Effective spatial extent decreases strongly |
+| ACS-02 | Macroform | Effective spatial extent increases strongly |
+| ACS-03 | Lightform | Effective inertial/gravitational response decreases |
+| ACS-04 | Remote Acquisition | Access/acquisition without ordinary traversal |
+| ACS-05 | Observer Dropout | Present object becomes unavailable to ordinary observation |
+| ACS-06 | Multi-Instance | Multiple authenticated instances appear simultaneously |
+| ACS-07 | Dual Presence | One identity is authenticated at separated locations |
+| ACS-08 | Gap Travel | Large displacement with an unobserved path |
+| ACS-09 | Instant Relocation | Discontinuous relocation |
+| ACS-10 | Unsupported Ascent | Upward displacement without identified support |
+| ACS-11 | Remote Sensing | Information gain without an identified ordinary signal path |
+| ACS-12 | Future Sensing | Information about a later outcome appears earlier |
+| ACS-13 | Accelerated Recovery | Recovery exceeds a specified comparison trajectory |
+| ACS-14 | Local Emergence | Local mass-energy inventory increases without an identified source |
 
-Each simulation tracks a shared state vector:
+These labels are project terminology only. They are not names for religious doctrines, practices, persons, or traditions.
 
-X = [position, velocity, mass, volume, energy, entropy, temperature, biological_viability, information_state, identity_state, observer_access, causal_access, prediction_horizon, sensory_access, uncertainty]
+## Abstract agent families
 
-A claimed power is therefore not represented by the word miracle; it is represented by a specific required change in X.
+Four neutral agent families group capabilities by the type of state transition being modeled:
 
-Examples:
+- **ScaleShiftAgent** — scale, extent, effective mass, and access transformations.
+- **PerceptShiftAgent** — observer coupling and multiplicity-style observation changes.
+- **PresenceShiftAgent** — identity and path-continuity transformations.
+- **BoundaryShiftAgent** — relocation, support-force, information, recovery, and local-emergence transformations.
 
-- teleportation -> position changes discontinuously while transport path is absent
-- bilocation -> one identity appears as two simultaneous authenticated instances
-- levitation -> vertical acceleration occurs without ordinary supporting force
-- invisibility -> observer-accessible optical information drops while the agent remains present
-- precognition -> reliable information about future random events appears before ordinary causal access
-- clairvoyance -> remote-state information becomes available without known signal path
-- healing -> biological state changes faster or more strongly than matched natural/control trajectories
-- materialization -> local mass-energy inventory changes without identified source
-- anima -> effective spatial extent falls dramatically
-- mahima -> effective spatial extent rises dramatically
-- laghima -> effective inertial/gravitational response falls dramatically
-- prapti -> remote access/acquisition occurs without ordinary traversal
-- mind-reading -> information about another agent's private state exceeds all permitted cue channels
+The grouping is computational convenience, not a claim about real-world ontology.
 
-## Scientific objective
+## State vector
 
-For every capability C, define Delta(C) as the minimum set of world variables that must change, and Sep(C) as the minimum observation set that separates the literal claim from all ordinary competing explanations.
+```
+X = [
+  position, velocity, mass, volume, energy, entropy, temperature,
+  biological_viability, information_state, identity_state,
+  observer_access, causal_access, prediction_horizon,
+  sensory_access, uncertainty
+]
+```
 
-The first tells us what reality would have to do differently. The second tells us what experiment would actually distinguish it.
+For capability C:
 
-## First research question
+- `Delta(C)` is the required world-state change.
+- `Sep(C)` is the minimum observation set that separates the stipulated model from competing ordinary explanations.
 
-When an extraordinary claim is translated into state variables, which variables must change first?
+## Synthetic benchmark
 
-Status: initial architecture established. Next step: implement the world-state schema and the first four agents, then run capability-by-capability simulations.
+The repository generates a 4,200-row benchmark:
+
+- 14 neutral capability classes
+- 3 worlds per class: baseline, ordinary mimic, stipulated simulation
+- 100 seeded trials per cell
+- 42 balanced cells total
+
+This dataset is synthetic software-test data. It is not empirical evidence.
+
+## SWEET-1 example
+
+SWEET-1 asks a deliberately simple question:
+
+> What observations would distinguish several different explanations for a 20 g sweet appearing in a monitored chamber?
+
+The simulator compares ordinary insertion, unknown transport, local emergence, transformation, and perceptual appearance. This is a mechanism-discrimination exercise, not a claim that the simulator can create a physical sweet.
+
+## Interactive app
+
+Install dependencies and launch:
+
+```bash
+pip install -r requirements.txt
+streamlit run streamlit_app.py
+```
+
+The app lets a user:
+
+1. select a neutral capability,
+2. adjust relevant parameters,
+3. describe any hypothetical outcome,
+4. simulate the state transition,
+5. inspect required state changes,
+6. inspect model extensions and ordinary mimics,
+7. see how the result is interpreted.
+
+The app never presents a simulated result as evidence that an extraordinary phenomenon exists.
+
+## Research disclaimer
+
+This repository is a hypothetical-modeling and software-validation project. It is not a religious commentary, theological interpretation, medical device, paranormal detector, or proof of extraordinary phenomena. Capability names and scenarios are deliberately abstracted to reduce cultural and religious attribution.
+
+The project is designed to study **claims as models**, not communities, beliefs, scriptures, or practitioners.
+
+## License
+
+Copyright (C) 2026 Mohammad Amir Khusru Akhtar
+
+Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE).
+
+## Citation / attribution
+
+If you use the simulator in research, please cite the repository and clearly state that its datasets and extraordinary-capability outputs are synthetic.
