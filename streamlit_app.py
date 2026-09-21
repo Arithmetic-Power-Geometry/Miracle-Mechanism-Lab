@@ -58,7 +58,7 @@ if "screen" not in st.session_state:
 if "last_result" not in st.session_state:
     st.session_state.last_result=None
 
-st.markdown('<div class="hero"><h1>ACS // FIELD LAB</h1><p>Interactive anomaly-model investigation console</p></div>', unsafe_allow_html=True)
+st.markdown('<div class="hero"><h1>Anomalous Capability Simulator (ACS)</h1><p>A research-oriented interactive laboratory for turning unusual-event descriptions into explicit state-transition models, animated experiments, competing explanations, and discriminating tests.</p></div>', unsafe_allow_html=True)
 
 GUIDE = {
 "microform":("Something becomes dramatically smaller","What variables must change if an object's effective size falls by a million-fold?"),
@@ -169,23 +169,45 @@ def apply_scenario():
 
 def scene_animation(cap,scenario,phase="experiment"):
     icon,arena,title,sub=VISUALS[cap]
-    klass={
-      "local_emergence":"emerge","instant_relocation":"teleport","gap_travel":"travel",
-      "unsupported_ascent":"ascend","microform":"shrink","macroform":"grow",
-      "lightform":"float","observer_dropout":"fade","multi_instance":"duplicate",
-      "dual_presence":"duplicate","remote_sensing":"signal","future_sensing":"signal",
-      "remote_acquisition":"signal","accelerated_recovery":"pulse"
-    }[cap]
     if cap=="local_emergence" and "sweet" in scenario.lower(): icon="🍬"
+    cfg={
+      "local_emergence":("emerge","EMPTY CHAMBER","LOCAL INVENTORY EVENT","Object appears at monitored center; no A→B travel is modeled."),
+      "instant_relocation":("teleport","SOURCE A","DESTINATION B","Object state switches from A to B with no modeled intermediate path."),
+      "gap_travel":("travel","TRACKED START A","TRACKED END B","Object traverses A→B while the middle path becomes observationally unavailable."),
+      "unsupported_ascent":("ascend","GROUND","VERTICAL Z","Object changes vertical position; support/force audit is the central question."),
+      "microform":("shrink","INITIAL SCALE","REDUCED SCALE","Object geometry contracts around a fixed center; this is a scale transformation, not travel."),
+      "macroform":("grow","INITIAL SCALE","EXPANDED SCALE","Object geometry expands around a fixed center; this is a scale transformation, not travel."),
+      "lightform":("float","REFERENCE MASS","REDUCED RESPONSE","Visual motion represents reduced effective response; force measurement is required."),
+      "observer_dropout":("fade","DETECTED","SENSOR DROPOUT","Object remains in the model while observer-access coupling falls."),
+      "multi_instance":("duplicate","INSTANCE 1","MULTIPLE INSTANCES","Additional authenticated appearances are represented; provenance is the key test."),
+      "dual_presence":("duplicate","SITE A","SITE B","The same identity is represented at separated sites simultaneously."),
+      "remote_sensing":("signal","CONCEALED TARGET","OBSERVER","Information-state gain is shown as a signal relation, not object motion."),
+      "future_sensing":("signal","FUTURE TARGET","EARLIER RECORD","Prediction horizon is represented as information preceding the target event."),
+      "remote_acquisition":("signal","REMOTE TARGET","LOCAL ACCESS","Access/information changes without an observed ordinary route."),
+      "accelerated_recovery":("pulse","BASELINE STATE","LATER STATE","A bounded state variable follows a faster modeled recovery trajectory.")
+    }[cap]
+    klass,leftlab,rightlab,meaning=cfg
+    endpoint_html=""
+    if cap in ("instant_relocation","gap_travel","dual_presence"):
+        endpoint_html=f'<div class="origin">{leftlab}</div><div class="destination">{rightlab}</div>'
+    elif cap=="local_emergence":
+        endpoint_html='<div class="origin">CHAMBER SEALED</div><div class="destination">INVENTORY +</div>'
+    elif cap=="unsupported_ascent":
+        endpoint_html='<div class="origin">z₀</div><div class="destination">z₁ ↑</div>'
+    elif cap in ("microform","macroform","lightform","observer_dropout","multi_instance","accelerated_recovery"):
+        endpoint_html=f'<div class="origin">{leftlab}</div><div class="destination">{rightlab}</div>'
+    else:
+        endpoint_html=f'<div class="origin">{leftlab}</div><div class="destination">{rightlab}</div>'
+    phase_label="EXPERIMENT REPLAY" if phase=="results" else "LIVE EXPERIMENT"
     st.markdown(f"""
     <div class="game-scene stage">
-      <div class="hud"><div class="hudline"><span><span class="statusdot"></span>LIVE SCENE</span><span>{arena}</span></div></div>
+      <div class="hud"><div class="hudline"><span><span class="statusdot"></span>{phase_label}</span><span>{arena}</span></div></div>
       <div class="stage-grid"></div><div class="coord c1">CAM-01 · LOCK</div><div class="coord c2">SENSOR BUS · LIVE</div>
-      <div class="origin">A</div><div class="destination">B</div>
+      {endpoint_html}
       <div class="actor {klass}">{icon}</div>
       <div class="game-caption">{title}</div>
       <div class="game-sub">{sub}</div>
-      <div class="objective"><b>SCENE:</b> {scenario}</div>
+      <div class="objective"><b>VISUAL MODEL:</b> {meaning}<br><b>SCENARIO:</b> {scenario}</div>
     </div>""",unsafe_allow_html=True)
 
 TOOLS={
@@ -268,7 +290,7 @@ elif st.session_state.screen=="results":
         st.session_state.screen="experiment"; st.rerun()
 
     st.markdown(f"## 03 // EXPERIMENT REPORT · {spec.code}")
-    scene_animation(cap,scenario,"results")
+    st.markdown(f'<div class="hud"><div class="hudline"><span>REPORT LOCKED TO {spec.code}</span><span>{VISUALS[cap][1]}</span></div><div class="objective"><b>ANALYZED EVENT:</b> {scenario}<br><b>MODEL:</b> {spec.display_name}<br><b>VISUAL USED IN EXPERIMENT:</b> {VISUALS[cap][2]} — {VISUALS[cap][3]}</div></div>',unsafe_allow_html=True)
     state=WorldState()
     if cap=="accelerated_recovery":
         state=WorldState(biological_viability=0.4)
@@ -415,6 +437,34 @@ elif st.session_state.screen=="results":
       "accelerated_recovery":"Operational clinical/biological endpoint; baseline trajectory; matched or randomized controls; blinded assessment where possible; time-course and uncertainty analysis."
     }[cap]
     st.write(protocol)
+
+    st.markdown("### ASSUMPTIONS AND SCOPE")
+    st.write("The transition is stipulated by the selected model. Values not changed by that model remain at baseline. The visualization is explanatory and does not generate additional measurements. Derived quantities are computed only from the selected parameters and declared benchmark assumptions.")
+    st.write(f"**Model family:** {spec.family}. **Tracked primary variable:** {spec.primary_variable}. **Expected direction:** {spec.expected_direction}.")
+
+    st.markdown("### MEASUREMENT / EVIDENCE CHECKLIST")
+    checklist={
+      "local_emergence":["Calibrated pre/post chamber mass","Continuous boundary surveillance","Object composition and provenance","Thermal/environmental record","Complete inventory reconciliation"],
+      "instant_relocation":["Authenticated object at source","Authenticated object at destination","Continuous path coverage","Synchronized clocks","Substitution controls"],
+      "gap_travel":["Continuous route coverage","Independent checkpoints","Identity continuity","Clock synchronization","Missing-data audit"],
+      "unsupported_ascent":["Force/load path","Airflow","Magnetic/electric fields","Motion capture","Environmental disturbances"],
+      "microform":["3D geometry","Mass","Identity","Camera calibration","Perspective control"],
+      "macroform":["3D geometry","Mass","Identity","Camera calibration","Perspective control"],
+      "lightform":["Mass/inertia","Force","Acceleration","Support/buoyancy","Airflow"],
+      "observer_dropout":["Optical sensor","Thermal sensor","Range sensor","Occlusion map","Synchronized logs"],
+      "multi_instance":["Independent identity tests","Simultaneous timestamps","Continuous provenance","Anti-substitution control","Independent cameras"],
+      "dual_presence":["Site-A authentication","Site-B authentication","Synchronized clocks","Continuous provenance","Independent observers/sensors"],
+      "remote_sensing":["Randomized target","Double blinding","Leakage audit","Predefined scoring","Trial uncertainty"],
+      "future_sensing":["Precommitted prediction","Later randomized target","Trusted timestamps","Predefined scoring","Stopping rule"],
+      "remote_acquisition":["Concealed randomized target","Access-channel audit","Blinding","Predefined criterion","Complete logs"],
+      "accelerated_recovery":["Defined endpoint","Baseline trajectory","Control group","Time course","Uncertainty analysis"]
+    }[cap]
+    for i,item in enumerate(checklist,1):
+        st.write(f"**{i}.** {item}")
+
+    st.markdown("### WHAT THIS RESULT CAN AND CANNOT SAY")
+    st.write("**Can say:** the selected computational model produced the requested state transition; the report identifies its mathematical consequences, a conventional competitor, and measurements capable of testing the distinction.")
+    st.write("**Cannot say:** that the animated event occurred physically, that the selected mechanism is true, or that a numerical residual is empirical evidence.")
 
     st.markdown("### REPORT CONCLUSION")
     changed=", ".join(delta) if delta else "no tracked state variables"
