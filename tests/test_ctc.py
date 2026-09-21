@@ -1,5 +1,5 @@
 import unittest
-from miracle_lab.core.ctc import Measurement, minimum_separating_set
+from miracle_lab.core.ctc import Measurement, minimum_separating_set, greedy_separating_set, separation_matrix
 from miracle_lab.core.ctc_benchmark import BENCHMARK
 class TestCTC(unittest.TestCase):
  def test_all_14(self):
@@ -14,3 +14,4 @@ class TestCTC(unittest.TestCase):
   r=minimum_separating_set(["a","b"],[Measurement("exp",5,{"a":0,"b":1}),Measurement("cheap",1,{"a":0,"b":1})])
   self.assertEqual(r.selected,("cheap",))
 if __name__=="__main__": unittest.main()
+
