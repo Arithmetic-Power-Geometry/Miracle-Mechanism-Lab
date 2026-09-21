@@ -25,6 +25,8 @@ jobs:
         run: python -m scripts.analyze_mechanism_clusters
       - name: Minimal mechanism basis
         run: python -m scripts.find_minimal_basis
+      - name: SWEET-1 benchmark
+        run: python -m scripts.run_sweet1
       - name: Upload audit artifacts
         uses: actions/upload-artifact@v4
         if: always()
