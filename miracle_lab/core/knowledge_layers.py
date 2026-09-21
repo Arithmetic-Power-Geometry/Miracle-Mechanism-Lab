@@ -26,7 +26,7 @@ KNOWLEDGE_LAYERS=(
  LayeredClaim("Christian hagiographic","charism/miracle report","saintly or charismatic marvel report",("unusual healing","unusual knowledge","multiple-location report","material event"),("divine action/grace",),("accelerated_recovery","remote_sensing","dual_presence","local_emergence")),
  LayeredClaim("Jewish scriptural/rabbinic","miracle/wonder report","scriptural or hagiographic marvel report",("unusual material event","unusual locomotion","unusual recovery"),("divine action",),("local_emergence","gap_travel","accelerated_recovery")),
  LayeredClaim("Comparative mysticism","mystical/noetic experience","transformative experience",("unity","noetic seeming","ineffability"),("theistic","nondual","naturalistic"),()),
- LayeredClaim("Anomalous reports","anomalous capability","reported anomaly",("unexpected information","unexpected motion","unexpected material change"),("underdetermined",),("remote_sensing","future_sensing","instant_relocation","local_emergence")),
+ LayeredClaim("Anomalous reports","anomalous capability","reported anomaly",("unexpected information","unexpected motion","unexpected material change","unexpected detection loss"),("underdetermined",),("remote_sensing","future_sensing","instant_relocation","local_emergence","observer_dropout")),
 )
 
 def by_capability(cap):
