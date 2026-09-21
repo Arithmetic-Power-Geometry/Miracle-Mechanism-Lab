@@ -27,6 +27,8 @@ jobs:
         run: python -m scripts.find_minimal_basis
       - name: SWEET-1 benchmark
         run: python -m scripts.run_sweet1
+      - name: SWEET-1 minimum measurements
+        run: python -m scripts.analyze_sweet1_separation
       - name: Upload audit artifacts
         uses: actions/upload-artifact@v4
         if: always()
