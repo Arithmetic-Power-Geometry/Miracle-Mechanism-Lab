@@ -1,7 +1,7 @@
 """ACS three-stage interface for the frozen 21 generic experiments."""
 import streamlit as st
 from miracle_lab.core.ui_catalogue import UI_EXPERIMENTS,DISPLAY_TO_KEY
-from miracle_lab.core.generic_engine import DEFAULTS
+from miracle_lab.core.parameter_specs import PARAMETERS
 from miracle_lab.core.mission_config import freeze_mission,execute_mission
 from miracle_lab.core.visual_catalogue import V
 from miracle_lab.core.evidence_report import build_report
@@ -30,9 +30,13 @@ if st.session_state.gx_screen=="briefing":
  st.markdown(f"**Mathematical signature:** `{spec.mathematics}`")
  st.markdown("### Parameters")
  params={}
- for p in spec.parameters:
-  default=DEFAULTS[key][p]
-  params[p]=st.number_input(p.replace("_"," ").title(),value=float(default),key=f"gx_{key}_{p}")
+ for ps in PARAMETERS[key]:
+  kwargs={"value":int(ps.default) if ps.integer else float(ps.default),"key":f"gx_{key}_{ps.name}","help":ps.description or None}
+  if ps.minimum is not None: kwargs["min_value"]=int(ps.minimum) if ps.integer else float(ps.minimum)
+  if ps.maximum is not None: kwargs["max_value"]=int(ps.maximum) if ps.integer else float(ps.maximum)
+  if ps.step is not None: kwargs["step"]=int(ps.step) if ps.integer else float(ps.step)
+  label=ps.label + (f" [{ps.unit}]" if ps.unit else "")
+  params[ps.name]=st.number_input(label,**kwargs)
  st.markdown("**Required measurements:** "+ " · ".join(spec.measurements))
  if st.button("ENTER EXPERIMENT →",type="primary",use_container_width=True):
   st.session_state.gx_mission=freeze_mission(key,example,params)
