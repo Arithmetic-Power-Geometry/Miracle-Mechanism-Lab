@@ -39,7 +39,7 @@ class TestStreamlitApp(unittest.TestCase):
         for scenario,code in expected:
             at.selectbox[0].select(scenario).run(timeout=20)
             self.assertFalse(at.exception)
-            self.assertIn(code,at.markdown[-3].value if len(at.markdown)>=3 else " ".join(x.value for x in at.markdown))
+            self.assertIn(code," ".join(x.value for x in at.markdown))
 
-if __name__=="__main__":
+    def test_each_scenario_preview_contains_its_own_visual_and_data(self):\n        at=self.app()\n        checks=[\n          ("A 20 g sweet appears in a monitored chamber","LOCAL INVENTORY EVENT","0.02 kg"),\n          ("An object changes position with no observed intermediate path","SOURCE A","1000 m"),\n          ("An object rises without an identified support","VERTICAL Z","1 m"),\n          ("An object becomes dramatically smaller","REDUCED SCALE","1e-06"),\n          ("Information appears before the later outcome","EARLIER RECORD","60 s"),\n          ("Recovery is unusually fast","LATER STATE","0.5"),\n        ]\n        for scenario,visual,value in checks:\n            at.selectbox[0].select(scenario).run(timeout=20)\n            html=" ".join(x.value for x in at.markdown)\n            self.assertIn(visual,html,scenario)\n            self.assertIn(value,html,scenario)\n\nif __name__=="__main__":
     unittest.main()
