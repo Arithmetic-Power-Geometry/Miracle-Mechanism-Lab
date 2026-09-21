@@ -5,6 +5,11 @@ from miracle_lab.core.generic_engine import DEFAULTS
 from miracle_lab.core.mission_config import freeze_mission,execute_mission
 from miracle_lab.core.visual_catalogue import V
 from miracle_lab.core.evidence_report import build_report
+from miracle_lab.core.generic_ctc import solve_experiment
+from miracle_lab.core.ctc_adaptive import optimal_adaptive_plan
+from miracle_lab.core.noisy_benchmark import noisy_experiment
+from miracle_lab.core.ctc_probabilistic import probabilistic_resolution_summary
+from miracle_lab.core.noisy_adaptive import choose_next
 
 st.set_page_config(page_title="ACS · 21 Experiment Lab",page_icon="🧪",layout="wide")
 if "gx_screen" not in st.session_state: st.session_state.gx_screen="briefing"
@@ -62,6 +67,22 @@ else:
  st.markdown("### Quantitative outputs"); st.json(report.outputs)
  st.markdown("### Competing explanations")
  for x in report.alternatives: st.write("• "+x)
+ st.markdown("### CTC experimental design")
+ ctc=solve_experiment(m.experiment)
+ st.write("**Minimum separating set:** "+(" · ".join(ctc["exact"].selected) or "none"))
+ st.write(f'**Exact fixed cost:** {ctc["exact"].total_cost:g} · **Greedy fixed cost:** {ctc["greedy"][1]:g}')
+ mechanisms,measurements=ctc["mechanisms"],ctc["measurements"]
+ adaptive=optimal_adaptive_plan(mechanisms,measurements)
+ st.write(f'**Deterministic adaptive worst-case cost:** {adaptive.worst_case_cost:g}')
+ nm,ne=noisy_experiment(m.experiment,"moderate")
+ cols=st.columns(3)
+ for col,acc in zip(cols,(.90,.95,.99)):
+  ns=probabilistic_resolution_summary(nm,ne,acc)
+  col.metric(f"Noisy {int(acc*100)}% max pair cost",f'{ns["max_pair_cost"]:g}')
+ prior={x:1/len(nm) for x in nm}
+ nxt=choose_next(prior,ne)
+ st.write(f"**Adaptive noisy first measurement:** {nxt or 'no admissible measurement'}")
+ st.caption("Noisy values use the synthetic moderate benchmark regime; they are not empirical effect estimates.")
  st.markdown("### Resolution boundary")
  if report.resolution_status=="UNRESOLVED":
   st.warning("UNRESOLVED — missing required measurements: "+", ".join(report.unresolved))
