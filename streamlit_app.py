@@ -21,15 +21,60 @@ st.markdown("""
 
 st.markdown('<div class="hero"><h1>🧪 Anomalous Capability Simulator</h1><p>Explore hypothetical state transitions, ordinary mimics, and measurable consequences — without asserting that extraordinary phenomena are real.</p></div>', unsafe_allow_html=True)
 
-st.info("Research simulator only. Outputs are synthetic model results, not empirical evidence, religious interpretation, medical advice, or proof of extraordinary powers.")
+st.info("Research simulator only. Outputs are synthetic model results, not empirical evidence, medical advice, or proof that an unusual capability exists.")
 
+with st.expander("👋 New here? Start in 60 seconds", expanded=True):
+    st.markdown("""
+**You do not need to know any capability name. Start with an event you are curious about.**
+
+1. Ask **what changed?** — size, mass, position, visibility, identity, information, recovery, or object inventory.
+2. Pick the closest capability below. The name is only a modeling shortcut.
+3. Change one parameter and run the simulation.
+4. Read **ordinary mimic** first. A surprising outcome is not automatically an unusual mechanism.
+5. Read **discriminating observation** to see what a real test would need to measure.
+
+**Example questions:** “What would have to change for a 20 g object to appear in a closed chamber?” · “What measurements distinguish hidden transport from instant relocation?” · “What would count as information arriving without an ordinary channel?”
+""")
+
+GUIDE = {
+"microform":("Something becomes dramatically smaller","Try: What variables must change if an object's effective size falls by a million-fold?"),
+"macroform":("Something becomes dramatically larger","Try: What must change if effective spatial extent increases enormously?"),
+"lightform":("Something behaves as if much lighter","Try: What measurements distinguish reduced effective mass from hidden support?"),
+"remote_acquisition":("Something is accessed without an observed route","Try: What would separate remote access from hidden cues or ordinary delivery?"),
+"observer_dropout":("Something present stops being detected","Try: What sensors would distinguish observer dropout from camouflage or occlusion?"),
+"multi_instance":("Several matching instances appear","Try: What evidence distinguishes genuine multiple instances from substitutes or recordings?"),
+"dual_presence":("The same identity appears at separated places","Try: What continuous provenance measurements would be required?"),
+"gap_travel":("A large journey has an unobserved segment","Try: What observations distinguish an unseen ordinary route from a path gap?"),
+"instant_relocation":("Position changes with no observed intermediate path","Try: How do distance and elapsed time change the modeled constraint residual?"),
+"unsupported_ascent":("Something rises without an identified support","Try: What force measurements could exclude hidden mechanical, aerodynamic, or magnetic support?"),
+"remote_sensing":("Information seems available without an identified channel","Try: What blinded test would distinguish information gain from leakage?"),
+"future_sensing":("Information seems available before the outcome","Try: What preregistered timing and randomization would separate prediction from selection effects?"),
+"accelerated_recovery":("Recovery is unusually fast","Try: How should an unusual recovery trajectory be compared with controls?"),
+"local_emergence":("An object or mass appears locally without an identified source","Try: What mass, energy, provenance, and chamber measurements would be needed?")
+}
 labels={f"{c.code} · {c.display_name}":c.capability for c in CAPABILITIES}
 left,right=st.columns([1,1])
 with left:
     selected_label=st.selectbox("Select a capability", list(labels))
     cap=labels[selected_label]
     spec=BY_NAME[cap]
-    scenario=st.text_area("Describe any hypothetical outcome", "A surprising event occurs under controlled observation.")
+    st.caption("Choose by the **observable event**, not by what you think caused it.")
+    scenario=st.text_area("What are you curious about?", "A surprising event occurs under controlled observation.", help="Describe only what an observer would see or measure. Avoid assuming the cause.")
+    st.markdown(f"**Best for:** {GUIDE[cap][0]}")
+    st.caption(GUIDE[cap][1])
+    with st.expander("Which capability should I choose?"):
+        st.markdown("""
+- **Size/shape changes:** Microform or Macroform
+- **Weight/support questions:** Lightform or Unsupported Ascent
+- **Movement/location:** Gap Travel or Instant Relocation
+- **Detection/visibility:** Observer Dropout
+- **Copies/same identity in places:** Multi-Instance or Dual Presence
+- **Unknown information source:** Remote Sensing, Future Sensing, or Remote Acquisition
+- **Unusual recovery:** Accelerated Recovery
+- **An object appears:** Local Emergence
+
+If two choices seem plausible, run both. Comparing explanations is part of the experiment.
+""")
 with right:
     st.markdown("### Parameters")
     kwargs={}
@@ -93,6 +138,9 @@ if st.button("✨ Run simulation", type="primary", use_container_width=True):
     else:
         st.write("No state variable changed under this parameterization.")
 
+    st.markdown("### Result in plain language")
+    st.write(f"The simulator changed **{', '.join(delta) if delta else 'no tracked state variable'}** to represent the selected hypothetical outcome.")
+    st.write("This tells you what the model had to change; it does **not** tell you that this is what happened in the physical world.")
     st.markdown("### How the model realizes the outcome")
     st.write(result.notes.get("claim_model","State transition model"))
     st.write(f"**Known constraint:** {spec.known_constraint}")
@@ -105,6 +153,15 @@ if st.button("✨ Run simulation", type="primary", use_container_width=True):
     st.write(scenario)
     st.warning("Interpretation: the software can simulate the requested hypothetical transition. It does not physically realize the event and does not establish that such a capability exists in nature.")
 
+with st.expander("How to read a result"):
+    st.markdown("""
+**Changed state variables** = what the software altered.  
+**Known constraint** = an ordinary rule/accounting condition the scenario presses against.  
+**Ordinary mimic** = a conventional explanation capable of producing a similar observation.  
+**Discriminating observation** = a measurement intended to separate those explanations.  
+**Normalized deviation** = a model-dependent comparison number, not a probability or a power score.
+""")
+
 with st.expander("About this project"):
-    st.write("The simulator uses neutral project-created labels and studies hypothetical capability patterns as computational models. It does not evaluate religions, scriptures, traditions, or practitioners.")
+    st.write("The simulator uses project-created neutral labels and studies hypothetical capability patterns as computational models.")
     st.write("Copyright (C) 2026 Mohammad Amir Khusru Akhtar · Apache License 2.0")
