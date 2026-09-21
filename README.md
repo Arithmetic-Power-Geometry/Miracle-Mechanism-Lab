@@ -91,6 +91,8 @@ The simulator compares ordinary insertion, unknown transport, local emergence, t
 
 ## Interactive app
 
+No prior knowledge of the capability vocabulary is required. A new user can begin from an observation — for example, “an object appears,” “something moves without an observed path,” or “information seems available without an identified channel.” The app explains which model is closest, suggests example questions, defines each output, and emphasizes ordinary competing explanations.
+
 Install dependencies and launch:
 
 ```bash
@@ -112,9 +114,11 @@ The app never presents a simulated result as evidence that an extraordinary phen
 
 ## Research disclaimer
 
-This repository is a hypothetical-modeling and software-validation project. It is not a religious commentary, theological interpretation, medical device, paranormal detector, or proof of extraordinary phenomena. Capability names and scenarios are deliberately abstracted to reduce cultural and religious attribution.
+This repository is a computational modeling and software-validation project for hypothetical unusual-capability scenarios. It does not claim that any simulated capability exists in the physical world, and simulation output must not be treated as empirical evidence.
 
-The project is designed to study **claims as models**, not communities, beliefs, scriptures, or practitioners.
+The project studies **hypotheses as models**: state transitions, measurable consequences, competing explanations, and discriminating tests. Project-created capability names are abstract technical labels and are not intended to identify or evaluate any cultural, philosophical, or belief system.
+
+The software is not a medical device or diagnostic system and should not be used for medical decisions.
 
 ## License
 
