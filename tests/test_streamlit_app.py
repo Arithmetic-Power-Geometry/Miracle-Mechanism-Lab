@@ -46,7 +46,7 @@ class TestStreamlitApp(unittest.TestCase):
         checks=[
           ("A 20 g sweet appears in a monitored chamber","CHAMBER SEALED","0.02 kg"),
           ("An object changes position with no observed intermediate path","SOURCE A","1000 m"),
-          ("An object rises without an identified support","VERTICAL Z","1 m"),
+          ("An object rises without an identified support","z₁ ↑","1 m"),
           ("An object becomes dramatically smaller","REDUCED SCALE","1e-06"),
           ("Information appears before the later outcome","EARLIER RECORD","60 s"),
           ("Recovery is unusually fast","LATER STATE","0.5"),
