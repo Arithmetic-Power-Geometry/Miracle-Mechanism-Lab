@@ -23,7 +23,7 @@ jobs:
         run: python -m scripts.run_inversion
       - name: Mechanism clustering
         run: python -m scripts.analyze_mechanism_clusters
-      - name: Upload audit artifacts
+      - name: Minimal mechanism basis\n        run: python -m scripts.find_minimal_basis\n      - name: Upload audit artifacts
         uses: actions/upload-artifact@v4
         if: always()
         with:
