@@ -123,7 +123,7 @@ VISUALS={
 "accelerated_recovery":("📈","TRAJECTORY LAB","Rate differs from reference","Endpoint · time course · controls"),
 }
 
-def render_game_scene(cap,scenario):
+def scene_animation(cap,scenario,phase="briefing"):
     icon,arena,title,sub=VISUALS[cap]
     mission_id=f"ACS-{list(BY_NAME).index(cap)+1:02d}"
     objective={
@@ -209,7 +209,23 @@ def scene_animation(cap,scenario,phase="experiment"):
         endpoint_html=f'<div class="origin">{leftlab}</div><div class="destination">{rightlab}</div>'
     else:
         endpoint_html=f'<div class="origin">{leftlab}</div><div class="destination">{rightlab}</div>'
-    phase_label="EXPERIMENT REPLAY" if phase=="results" else "LIVE EXPERIMENT"
+    phase_label={"results":"EXPERIMENT REPLAY","briefing":"MISSION PREVIEW"}.get(phase,"LIVE EXPERIMENT")
+    values={
+      "local_emergence":f"Δm = {float(st.session_state.get('param_delta_mass_kg',0.020)):.6g} kg",
+      "instant_relocation":f"Δx = {float(st.session_state.get('param_dx',1000.0)):.6g} m",
+      "gap_travel":f"Δx = {float(st.session_state.get('param_dx',1000.0)):.6g} m",
+      "unsupported_ascent":f"Δz = {float(st.session_state.get('param_dz',1.0)):.6g} m",
+      "microform":f"scale = {float(st.session_state.get('param_scale',1e-6)):.6g}",
+      "macroform":f"scale = {float(st.session_state.get('param_scale',1e6)):.6g}",
+      "lightform":f"mass scale = {float(st.session_state.get('param_mass_scale',1e-6)):.6g}",
+      "observer_dropout":"observer access: 1 → 0",
+      "multi_instance":f"instances = {int(st.session_state.get('param_copies',2))}",
+      "dual_presence":"authenticated sites = 2",
+      "remote_sensing":f"information gain = {float(st.session_state.get('param_information_gain',1.0)):.6g} model-unit",
+      "future_sensing":f"horizon = {float(st.session_state.get('param_horizon',60.0)):.6g} s",
+      "remote_acquisition":f"access gain = {float(st.session_state.get('param_remote_information_gain',1.0)):.6g} model-unit",
+      "accelerated_recovery":f"viability gain = {float(st.session_state.get('param_viability_gain',0.5)):.3g}",
+    }[cap]
     st.markdown(f"""
     <div class="game-scene stage">
       <div class="hud"><div class="hudline"><span><span class="statusdot"></span>{phase_label}</span><span>{arena}</span></div></div>
@@ -218,7 +234,7 @@ def scene_animation(cap,scenario,phase="experiment"):
       <div class="actor {klass}">{icon}</div>
       <div class="game-caption">{title}</div>
       <div class="game-sub">{sub}</div>
-      <div class="objective"><b>VISUAL MODEL:</b> {meaning}<br><b>SCENARIO:</b> {scenario}</div>
+      <div class="objective"><b>VISUAL MODEL:</b> {meaning}<br><b>SCENARIO:</b> {scenario}<br><b>MISSION DATA:</b> {values}</div>
     </div>""",unsafe_allow_html=True)
 
 TOOLS={
@@ -258,7 +274,7 @@ if st.session_state.screen=="briefing":
     st.markdown(f"**Automatically selected model:** {spec.code} · {spec.display_name}")
     st.caption("The model is locked to the chosen mission so Stage 1, Stage 2 and Stage 3 cannot drift to a different experiment.")
     st.markdown(f'<div class="hud"><div class="hudline"><span>MISSION {spec.code}</span><span>{VISUALS[cap][1]}</span></div><div class="objective"><b>OBJECTIVE:</b> {GUIDE[cap][0]}</div></div>',unsafe_allow_html=True)
-    render_game_scene(cap,scenario)
+    scene_animation(cap,scenario,phase="briefing")
     if st.button("ENTER EXPERIMENT →",type="primary",use_container_width=True):
         st.session_state.active_cap=cap
         st.session_state.active_scenario=scenario
