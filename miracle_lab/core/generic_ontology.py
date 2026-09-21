@@ -27,6 +27,8 @@ GENERIC_PHENOMENA={
 "revival":("biological_state","state_reversal"),
 "resilience":("biological_state","hazard_response"),
 "form_transformation":("geometry","identity_continuity"),
+"mind_influence":("agency_causation","cognitive_target"),
+"knowledge_amplification":("information_causality","scope"),
 }
 
 EXAMPLE_MAP={
@@ -42,6 +44,7 @@ EXAMPLE_MAP={
 "psychokinesis":"external_influence","control of elements":"environmental_influence",
 "healing":"accelerated_recovery","raising the dead":"revival","fire immunity":"resilience",
 "poison immunity":"resilience","shape changing":"form_transformation",
+"telepathy":"remote_information","mind influence":"mind_influence","omniscience":"knowledge_amplification",
 }
 
 def generic_class(example):
@@ -77,6 +80,8 @@ EXPERIMENT_CATALOGUE={
 "revival":{"title":"State Revival","examples":("raising the dead","revival report"),"parameters":("state_definition","elapsed_time","independent_confirmation")},
 "resilience":{"title":"Anomalous Resilience","examples":("fire immunity","poison immunity"),"parameters":("hazard","dose","response")},
 "form_transformation":{"title":"Form Transformation","examples":("shape changing","identity-preserving transformation"),"parameters":("geometry_before","geometry_after","identity_audit")},
+"mind_influence":{"title":"Mind/Agency Influence","examples":("mind influence","altered cognition at a distance"),"parameters":("target","randomization","blinding","effect_size")},
+"knowledge_amplification":{"title":"Knowledge Amplification","examples":("omniscience","exceptionally broad knowledge claim"),"parameters":("target_domain","sampling_frame","precommitment","accuracy")},
 }
 
 def catalogue_audit():
