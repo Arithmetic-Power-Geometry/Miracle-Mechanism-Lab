@@ -1,5 +1,5 @@
 """Generate the canonical 21-GX synthetic benchmark dataset."""
-import csv,random
+import csv,json,random
 from pathlib import Path
 from miracle_lab.core.experiment_specs import SPECS
 from miracle_lab.core.generic_engine import execute,DEFAULTS
@@ -14,9 +14,10 @@ for key,spec in SPECS.items():
    result=execute(key,DEFAULTS[key])
    rows.append({"trial_id":trial,"experiment":key,"code":spec.code,"world":world,
     "target_signal":target,"mimic_signal":alt,"seed":20260921+rep,
-    "model_outputs":repr(sorted(result.outputs.items())),
+    "model_outputs":json.dumps(result.outputs,sort_keys=True,separators=(",",":")),
+    "schema_version":"acs-synthetic-v1",
     "interpretation_boundary":result.boundary})
-header=("trial_id","experiment","code","world","target_signal","mimic_signal","seed","model_outputs","interpretation_boundary")
+header=("trial_id","experiment","code","world","target_signal","mimic_signal","seed","model_outputs","schema_version","interpretation_boundary")
 with (OUT/"synthetic_claim_trials.csv").open("w",newline="",encoding="utf-8") as f:
  w=csv.DictWriter(f,fieldnames=header); w.writeheader(); w.writerows(rows)
 print(f"wrote {len(rows)} rows across {len(SPECS)} experiments")
