@@ -1,91 +1,60 @@
-# Claim-to-Test Compiler (CTC): Formal Core v0.1
+# Claim-to-Test Compiler (CTC): Formal Core v0.2
 
 ## Purpose
-ACS is a demonstrator for a general problem: given an observed or alleged event and several mechanisms compatible with what is already observed, determine what additional admissible measurement is needed to distinguish the mechanisms. CTC does not infer that an unusual mechanism is real.
+ACS is a demonstrator for a general problem: given an observed or alleged event and several mechanisms compatible with what is already observed, determine what additional admissible measurement is needed to distinguish them. CTC does not infer that an unusual mechanism is real.
 
 ## Formal objects
-A claim instance is (C=(X_0,O_0,\mathcal M,\mathcal E,c)), where (X_0) is baseline state, (O_0) current observations, (\mathcal M) candidate mechanisms compatible with (O_0), (\mathcal E) admissible experiments, and (c(e)\ge0) experiment cost. For mechanism (m) and experiment (e), (P_{m,e}(y)) is the predicted observable-outcome distribution; deterministic benchmarks use (O_e(m)).
+A claim instance is \(C=(X_0,O_0,\mathcal M,\mathcal E,c)\), where \(X_0\) is baseline state, \(O_0\) current observations, \(\mathcal M\) candidate mechanisms compatible with \(O_0\), \(\mathcal E\) admissible experiments, and \(c(e)\ge0\) experiment cost. For mechanism \(m\) and experiment \(e\), \(P_{m,e}(y)\) is the predicted observable-outcome distribution; deterministic benchmarks use \(O_e(m)\).
 
 ## Experimental equivalence
-(m_i\sim_A m_j) iff (P_{m_i,e}=P_{m_j,e}) for every (e\in A\subseteq\mathcal E). Current evidence therefore induces equivalence classes of mechanisms rather than necessarily identifying one mechanism.
+\(m_i\sim_A m_j\) iff \(P_{m_i,e}=P_{m_j,e}\) for every \(e\in A\subseteq\mathcal E\). Current evidence therefore induces equivalence classes rather than necessarily identifying one mechanism.
 
-## Separation
-An experiment separates (m_i,m_j) when their predicted outcome distributions differ. Deterministically,
-(Sep_e(m_i,m_j)=1[O_e(m_i)\ne O_e(m_j)]).
-Noisy versions may use a preregistered statistical distance/test-power threshold.
-
-## Minimum Separating Experiment Set (MSES)
-For decision-relevant mechanism pairs (D),
-[
-MSES(C)=\arg\min_{A\subseteq\mathcal E}\sum_{e\in A}c(e)
-]
-subject to every pair in (D) being separated by at least one (e\in A).
-
-Define Experimental Separation Cost
-[
-ESC(C;D)=\min_A\{\sum_{e\in A}c(e): A\text{ separates every pair in }D\},
-]
-with (ESC=\infty) if admissible experiments cannot resolve all required pairs.
+## Minimum Separating Experiment Set
+For decision-relevant pairs \(D\), MSES minimizes \(\sum_{e\in A}c(e)\) subject to every pair in \(D\) being separated by at least one admissible \(e\in A\). Experimental Separation Cost (ESC) is the corresponding minimum cost, with \(ESC=\infty\) when admissible experiments cannot resolve all required pairs.
 
 For finite deterministic benchmarks this is a weighted set-cover/hitting-set problem over mechanism pairs. That optimization primitive is established prior art and is not itself a novelty claim.
 
-## Proposition 1 — admissible non-identifiability
-If distinct (m_i,m_j) have identical outcome laws for every admissible experiment, no decision rule using only transcripts of admissible experiments can always distinguish them.
+## Core propositions
+**Admissible non-identifiability.** If distinct mechanisms have identical outcome laws for every admissible experiment, no rule using only admissible experimental transcripts can always distinguish them.
 
-**Proof sketch.** Every admissible experimental transcript has the same distribution under both mechanisms, so the transcript contains no mechanism-distinguishing information. A rule based only on that transcript cannot be certainly correct for both. □
+**Monotone resolvability.** If \(A\subseteq B\subseteq\mathcal E\), every pair separated by \(A\) remains separated by \(B\).
 
-## Proposition 2 — monotone resolvability
-If (A\subseteq B\subseteq\mathcal E), every pair separated by (A) remains separated by (B). Thus the unresolved-pair set cannot increase when experiments are added.
+**Finite deterministic reduction.** For finite deterministic \(\mathcal M,\mathcal E\), minimum-cost complete pair separation reduces to weighted set cover over required mechanism pairs.
 
-## Proposition 3 — finite deterministic reduction
-For finite deterministic (\mathcal M,\mathcal E), minimum-cost complete pair separation reduces to weighted set cover: required mechanism pairs form the universe and each experiment covers the pairs it separates.
+**Admissibility obstruction.** Restricting \(\mathcal E\) to an admissible subset can make a previously separable pair observationally equivalent. CTC therefore reports unresolved pairs rather than treating an unavailable probe as evidence.
 
-## Candidate contribution to audit
-Established literature already covers model-discrimination design, T-optimality, KL-optimality, identifiability, observational equivalence and related optimization. Candidate ACS/CTC contributions are instead:
-1. compiling heterogeneous event claims into one state-transition + mechanism + measurement representation;
-2. a cross-domain benchmark spanning geometry, mechanics, detection, identity/provenance, information, time and dynamics;
-3. making appearance reproduction distinct from mechanism identification;
-4. returning unresolved equivalence classes and admissibility-aware minimum separating measurement sets as first-class outputs;
-5. exposing the complete audit trail in an interactive demonstrator.
+## Canonical 21-GX scope
+| Code | Experiment | Required measurement dimensions |
+|---|---|---|
+| GX-01 | Scale Decrease | 3-D geometry · mass · identity |
+| GX-02 | Scale Increase | 3-D geometry · mass · identity |
+| GX-03 | Mass-Response Decrease | force · acceleration · support |
+| GX-04 | Mass-Response Increase | force · acceleration · support |
+| GX-05 | Unsupported Motion | position · force · environment |
+| GX-06 | Path Discontinuity | trajectory · time · identity |
+| GX-07 | Barrier Transit | barrier integrity · trajectory · identity |
+| GX-08 | Detection Dropout | multimodal detection · position · time |
+| GX-09 | Multiple Instances | identity · simultaneity · provenance |
+| GX-10 | Multi-location Identity | independent authentication · trusted clocks · location |
+| GX-11 | Remote Information | targets · responses · channel audit |
+| GX-12 | Future Information | commitment · later RNG target · timestamps |
+| GX-13 | Past Information | historical target sampling · response · provenance |
+| GX-14 | Remote Acquisition | target access · channel · timing |
+| GX-15 | Local Emergence | mass balance · boundary · provenance |
+| GX-16 | External Influence | target outcome · randomization · controls |
+| GX-17 | Environmental Influence | environmental field · controls · timing |
+| GX-18 | Accelerated Recovery | baseline · time course · control |
+| GX-19 | State Revival | state criterion · independent confirmation · time |
+| GX-20 | Anomalous Resilience | hazard dose · exposure · response |
+| GX-21 | Form Transformation | geometry · identity · continuous observation |
 
-These are development targets to be validated through implementation and stress testing.
+## Synthetic benchmark semantics
+The canonical software gives each declared measurement an explicit synthetic diagnostic role against one named alternative. These signatures are transparent methodological fixtures for exercising exact, greedy, adaptive and noisy discrimination algorithms. They are not empirical mechanism predictions.
 
-## ACS theory matrix
-| ACS | Domain | Primary observable | Main rival | Candidate separator |
-|---|---|---|---|---|
-| 01 Microform | geometry | volume/extent | perspective | calibrated 3D geometry + mass + identity |
-| 02 Macroform | geometry | volume/extent | perspective | calibrated 3D geometry + mass + identity |
-| 03 Lightform | mechanics | effective response | support/buoyancy | force + acceleration + support audit |
-| 04 Remote Acquisition | access | access/information | hidden channel | randomized target + channel audit |
-| 05 Observer Dropout | detection | observer access | occlusion/sensor failure | independent multimodal sensing |
-| 06 Multi-Instance | identity | instance count | substitution | simultaneous authentication + provenance |
-| 07 Dual Presence | locality | identity at two sites | substitution/timing | two-site authentication + synchronized clocks |
-| 08 Gap Travel | trajectory | path observability | missing coverage | continuous authenticated tracking |
-| 09 Instant Relocation | trajectory | position discontinuity | hidden transport | continuous path + identity |
-| 10 Unsupported Ascent | mechanics | vertical force/motion | support/airflow/fields | force/environment audit |
-| 11 Remote Sensing | information | target information | leakage/chance | randomization + blinding + scoring |
-| 12 Future Sensing | temporal information | prediction before target | leakage/timing | commitment + later RNG + trusted time |
-| 13 Accelerated Recovery | dynamics | recovery trajectory | baseline/confounding | endpoint + time course + controls |
-| 14 Local Emergence | inventory | local mass/provenance | hidden transfer/transformation | sealed boundary + inventory + composition |
+## Release stress tests
+The implementation must handle irreducible equivalence, admissibility obstruction, greedy traps and redundant measurements. Exact search is the finite deterministic reference. Every mission reports unresolved pairs when the available evidence cannot support separation.
 
-## Immediate implementation target
-Every mission should return candidate mechanisms, current equivalence classes, an experiment × mechanism-pair separation matrix, exact MSES/ESC, unresolved pairs, assumptions/admissibility constraints, and a calculation audit. The benchmark should assign explicit synthetic costs and outcome signatures and verify exact solutions by exhaustive search.
+## Scope boundary
+Established literature covers model-discrimination design, T-optimality, KL-optimality, identifiability, observational equivalence and related optimization. ACS combines a canonical cross-domain experiment representation with explicit measurement requirements, admissibility-aware separation, unresolved equivalence classes, synthetic benchmarks and an interactive audit interface. Any broader novelty claim requires comparison with the relevant literature.
 
-
-Atkinson & Cox (1974), *Planning Experiments for Discriminating between Models*; Atkinson & Fedorov (1975), *Optimal Design: Experiments for Discriminating between Several Models*; later T-optimal, KL-optimal and Bayesian discriminating-design literature; contemporary optimal experiment design for practical identifiability and model discrimination.
-
-
-
-## Stress-test obligations before manuscript freeze
-
-The implementation must survive adversarial cases, not merely examples constructed to be separable:
-
-- **Irreducible equivalence:** distinct mechanisms have identical signatures under every admissible measurement; the correct output is unresolved with (ESC=\infty).
-- **Admissibility obstruction:** a separating probe exists mathematically but is forbidden; the admissible problem remains unresolved.
-- **Greedy trap:** a locally attractive cost/coverage choice need not be globally optimal; exact search is the finite-benchmark reference.
-- **Redundancy:** a more expensive measurement with an identical separation signature must never be selected over its cheaper equivalent.
-
-### Proposition 4 — admissibility can destroy resolvability
-Let (\mathcal E'\subseteq\mathcal E) be the admissible subset. A mechanism pair may be separable in (\mathcal E) yet observationally equivalent in (\mathcal E'). Therefore feasibility of identification is relative to the admissible experiment set, not merely to the existence of a mathematically separating observation.
-
-This proposition is elementary in the present finite formulation. Its value here is architectural: CTC must report **unresolved because no admissible separator exists**, rather than treating an unavailable/unsafe/forbidden measurement as evidence.
+Background: Atkinson & Cox (1974), *Planning Experiments for Discriminating between Models*; Atkinson & Fedorov (1975), *Optimal Design: Experiments for Discriminating between Several Models*; later T-optimal, KL-optimal, Bayesian discriminating-design, identifiability and model-discrimination literature.
