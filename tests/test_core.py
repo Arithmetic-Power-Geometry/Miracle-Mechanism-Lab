@@ -21,7 +21,7 @@ class TestCanonicalCore(unittest.TestCase):
   self.assertEqual(report.resolution_status,"UNRESOLVED")
   self.assertTrue(report.unresolved)
  def test_complete_declared_measurements_resolve_only_measurement_set(self):
-  m=freeze_mission("remote_information","clairvoyance",{"target_space":4,"trials":100})
+  m=freeze_mission("remote_information","concealed-target inference",{"target_space":4,"trials":100})
   r=execute_mission(m)
   from miracle_lab.core.experiment_specs import SPECS
   report=build_report(r,SPECS["remote_information"].measurements)
