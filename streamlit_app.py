@@ -107,7 +107,6 @@ if st.session_state.gx_screen=="briefing":
  choice=st.selectbox("Choose experiment",tuple(DISPLAY_TO_KEY))
  key=DISPLAY_TO_KEY[choice]; spec=UI_EXPERIMENTS[key]; explain=public_explanation(key); example=st.selectbox("Scenario",spec.examples)
  visual(spec,V[key],1)
- st.markdown("### In plain language")
  st.write(explain["plain"])
  st.write("**Why this experiment matters:** "+explain["why"])
  st.info("Key idea: "+explain["takeaway"])
