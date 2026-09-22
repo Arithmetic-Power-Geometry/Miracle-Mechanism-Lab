@@ -138,11 +138,11 @@ elif st.session_state.gx_screen=="experiment":
  c1,c2=st.columns([1,1])
  with c1:
   st.markdown("### Frozen configuration")
- st.caption("These are the model settings for this run. They define the simulated case; they are not observations by themselves.")
+  st.caption("These are the model settings for this run. They define the simulated case; they are not observations by themselves.")
   st.json(dict(m.parameters))
  with c2:
   st.markdown("### Evidence checklist")
- st.caption("Only tick evidence that would genuinely be available in a real study or review. Missing evidence stays missing.")
+  st.caption("Only tick evidence that would genuinely be available in a real study or review. Missing evidence stays missing.")
   observed=[]
   for x,desc in zip(spec.measurements,explain["measure"]):
    if st.checkbox(f"Observe · {x}",key=f"obs_{m.code}_{x}",help=desc): observed.append(x)
