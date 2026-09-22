@@ -6,11 +6,11 @@ from miracle_lab.core.ctc import Measurement
 class TestKnowledgeAgent(unittest.TestCase):
  def test_all_21_experiments_covered(self):
   self.assertEqual(len({x.capability for x in CLAIM_ONTOLOGY}),21)
- def test_historical_alias_compiles_neutrally(self):
-  self.assertIn(("anima","scale_decrease"),classify_description("anima"))
+ def test_neutral_alias_compiles(self):
+  self.assertIn(("extreme shrinking","scale_decrease"),classify_description("extreme shrinking"))
   self.assertEqual(audit_claim("scale_decrease")["epistemic_status"],"description compiled; phenomenon not established")
- def test_ambiguous_terms_not_forced(self):
-  self.assertEqual(classify_description("siddhi"),())
+ def test_unrecognized_terms_not_forced(self):
+  self.assertEqual(classify_description("unclassified broad label"),())
  def test_resolution_boundary_preserves_indistinguishability(self):
   e=Measurement("safe",1,{"a":0,"b":0,"c":1})
   r=resolution_boundary(["a","b","c"],[e])
