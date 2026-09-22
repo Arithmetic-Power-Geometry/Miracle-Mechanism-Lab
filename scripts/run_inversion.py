@@ -1,11 +1,11 @@
-import csv,json,ast
+import csv,json
 from collections import defaultdict
 from pathlib import Path
 from miracle_lab.core.inversion import minimum_modification
 rows=list(csv.DictReader(Path("data/synthetic_claim_trials.csv").open(encoding="utf-8"))); out=[]
 for r in rows:
  if r["world"]!="literal_simulation": continue
- obs=dict(ast.literal_eval(r["model_outputs"])); m=minimum_modification(r["experiment"],obs)
+ obs=json.loads(r["model_outputs"]); m=minimum_modification(r["experiment"],obs)
  if m: out.append({"experiment":r["experiment"],"mechanism":m.name,"magnitude":m.magnitude,"unit":m.unit,"normalized_cost":m.normalized_cost})
 agg=defaultdict(lambda:{"n":0,"cost":0.0})
 for r in out:
