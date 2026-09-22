@@ -11,6 +11,7 @@ from miracle_lab.core.ctc_adaptive import optimal_adaptive_plan
 from miracle_lab.core.noisy_benchmark import noisy_experiment
 from miracle_lab.core.ctc_probabilistic import probabilistic_resolution_summary
 from miracle_lab.core.noisy_adaptive import choose_next
+from miracle_lab.core.motion_geometry import experiment_svg
 
 st.set_page_config(page_title="ACS Game Zone · 21 Experiment Lab",page_icon="🎮",layout="wide")
 
@@ -23,7 +24,8 @@ if "gx_screen" not in st.session_state: st.session_state.gx_screen="briefing"
 if "gx_score" not in st.session_state: st.session_state.gx_score=0
 if "gx_runs" not in st.session_state: st.session_state.gx_runs=0
 
-def visual(spec,v):
+def visual(spec,v,stage=1):
+ st.markdown(experiment_svg(spec.key,stage),unsafe_allow_html=True)
  st.markdown(f'<div class="gx-card"><div class="gx-stage">{spec.arena}</div><div class="gx-kpi">{spec.symbol} {spec.code} · {spec.title}</div><div class="gx-small">{v.left} → {v.right}</div><p>{v.caption}</p></div>',unsafe_allow_html=True)
 
 def progress():
@@ -43,7 +45,7 @@ if st.session_state.gx_screen=="briefing":
  st.write("Choose a mission, inspect the observable signature, tune the model, then lock the mission before entering the lab.")
  choice=st.selectbox("Choose experiment",tuple(DISPLAY_TO_KEY))
  key=DISPLAY_TO_KEY[choice]; spec=UI_EXPERIMENTS[key]; example=st.selectbox("Scenario",spec.examples)
- visual(spec,V[key])
+ visual(spec,V[key],1)
  c1,c2,c3=st.columns(3)
  c1.metric("Required measurements",len(spec.measurements))
  c2.metric("Alternative explanations",len(spec.discriminators))
@@ -70,7 +72,7 @@ if st.session_state.gx_screen=="briefing":
 elif st.session_state.gx_screen=="experiment":
  m=st.session_state.gx_mission; spec=UI_EXPERIMENTS[m.experiment]; v=V[m.experiment]
  st.markdown("## 02 // EXPERIMENT ZONE")
- visual(spec,v)
+ visual(spec,v,2)
  st.write(f"**Scenario locked:** {m.example}")
  c1,c2=st.columns([1,1])
  with c1:
@@ -97,7 +99,7 @@ else:
  spec=UI_EXPERIMENTS[m.experiment]; observed=st.session_state.get("gx_observed",())
  report=build_report(result,observed)
  st.markdown("## 03 // ANALYSIS & OUTPUT ZONE")
- visual(spec,V[m.experiment])
+ visual(spec,V[m.experiment],3)
  c1,c2,c3=st.columns(3)
  c1.metric("Observed required",f"{len(observed)}/{len(spec.measurements)}")
  c2.metric("Output fields",len(report.outputs))
