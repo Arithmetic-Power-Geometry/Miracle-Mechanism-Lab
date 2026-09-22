@@ -30,4 +30,14 @@ class TestGenericEngine(unittest.TestCase):
    with self.assertRaises(ValueError): execute(key,p)
  def test_controls_are_positive_integer(self):
   with self.assertRaises(ValueError): execute("external_influence",{"controls":1.5})
+ def test_multiple_instances_requires_two(self):
+  with self.assertRaises(ValueError): execute("multiple_instances",{"instance_count":1})
+ def test_declared_metadata_parameters_are_emitted(self):
+  self.assertEqual(execute("remote_information",{"target_space":4,"trials":17}).outputs["trials"],17)
+  self.assertEqual(execute("past_information",{"lookback_horizon":12,"target_space":4}).outputs["lookback_horizon_s"],12)
+  self.assertEqual(execute("local_emergence",{"mass_delta":.02,"boundary_audit":.7}).outputs["boundary_audit"],.7)
+  self.assertEqual(execute("external_influence",{"effect_size":1,"distance":8,"controls":2}).outputs["target_distance_m"],8)
+  self.assertEqual(execute("revival",{"state_definition":.2,"elapsed_time":5,"independent_confirmation":.8}).outputs["initial_state_code"],.2)
+ def test_future_trials_are_integer(self):
+  with self.assertRaises(ValueError): execute("future_information",{"prediction_horizon":1,"trials":2.5})
 if __name__=="__main__": unittest.main()
