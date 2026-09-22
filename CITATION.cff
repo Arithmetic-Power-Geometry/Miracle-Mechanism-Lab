@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use ACS in your research, please cite both the software and the associated paper."
+title: "Anomalous Capability Simulator (ACS): Miracle-Mechanism-Lab"
+type: software
+authors:
+  - family-names: "Akhtar"
+    given-names: "Mohammad Amir Khusru"
+    orcid: "https://orcid.org/0000-0002-3432-4199"
+year: 2026
+repository-code: "https://github.com/Arithmetic-Power-Geometry/Miracle-Mechanism-Lab"
+url: "https://miracle-mechanism-lab.streamlit.app/"
+preferred-citation:
+  type: article
+  authors:
+    - family-names: "Akhtar"
+      given-names: "Mohammad Amir Khusru"
+      orcid: "https://orcid.org/0000-0002-3432-4199"
+  title: "From Claims to Discriminating Tests: A Computational Framework for Measurement-Explicit Analysis of Anomalous Capability Reports"
+  year: 2026
+  version: "V1"
+  publisher:
+    name: "Zenodo"
+  doi: "10.5281/zenodo.22895820"
+  url: "https://doi.org/10.5281/zenodo.22895820"
