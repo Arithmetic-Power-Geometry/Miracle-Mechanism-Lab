@@ -4,7 +4,7 @@ from miracle_lab.core.experiment_specs import SPECS
 
 MOTIFS={
 "scale_decrease":("◎","Radial contraction","r(t) ↓"),
-"scale_increase":("◉","Radial expansion","r(t) ↑"),
+      "scale_increase":'<g><rect x="120" y="105" width="110" height="90" rx="8" class="barrier"/><text x="137" y="92" class="muted">START SIZE</text><g transform="translate(175 150)"><rect x="-30" y="-25" width="60" height="50" rx="7" class="object"/><circle cx="-12" cy="-8" r="5" class="detail"/><path d="M-20 15 L-5 0 L8 13 L20 -8" class="wave"/><animateTransform attributeName="transform" type="scale" values="1;2.8;2.8;1" dur="5s" repeatCount="indefinite"/></g><path d="M285 150 H700" class="scan" stroke-dasharray="8 10"/><path d="M660 95 L720 150 L660 205 M720 150 H810" class="wave"/><text x="625" y="78" class="t">SAME OBJECT · LARGER GEOMETRY</text></g>',
 "mass_response_decrease":("△","Reduced response","F/m ↓"),
 "mass_response_increase":("▽","Increased response","F/m ↑"),
 "unsupported_motion":("↟","Unsupported trajectory","x(t)"),
