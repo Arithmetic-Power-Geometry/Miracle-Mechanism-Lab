@@ -6,7 +6,7 @@
 
 ## Neutrality statement
 
-The canonical software uses project-created, plain-English experiment and scenario labels. It does not classify communities, doctrines, scriptures, practitioners, or belief systems.
+The canonical software uses project-created, plain-English experiment and scenario labels. It does not classify people, communities, worldviews, or cultural systems.
 
 ## What the simulator can claim
 
