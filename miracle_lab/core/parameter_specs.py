@@ -52,7 +52,7 @@ PARAMETERS={
  _p("sensor_modalities","Independent sensor modalities","count",4,1,None,1,integer=True),
 ),
 "multiple_instances":(
- _p("instance_count","Authenticated simultaneous instances","count",2,1,None,1,integer=True),
+ _p("instance_count","Authenticated simultaneous instances","count",2,2,None,1,integer=True),
 ),
 "multi_location_identity":(
  _p("site_separation","Site separation","m",1000.0,0.0,None),

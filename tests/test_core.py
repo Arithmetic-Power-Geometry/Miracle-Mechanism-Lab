@@ -16,12 +16,12 @@ class TestCanonicalCore(unittest.TestCase):
   r=execute("path_discontinuity",{"distance":1000,"elapsed_time":1,"coverage":0})
   self.assertEqual(r.outputs["unobserved_fraction"],1)
  def test_missing_measurements_remain_unresolved(self):
-  m=freeze_mission("path_discontinuity","instant relocation",{"distance":1000,"elapsed_time":1,"coverage":0})
+  m=freeze_mission("path_discontinuity","endpoint discontinuity",{"distance":1000,"elapsed_time":1,"coverage":0})
   report=build_report(execute_mission(m),())
   self.assertEqual(report.resolution_status,"UNRESOLVED")
   self.assertTrue(report.unresolved)
  def test_complete_declared_measurements_resolve_only_measurement_set(self):
-  m=freeze_mission("remote_information","clairvoyance",{"target_space":4,"trials":100})
+  m=freeze_mission("remote_information","concealed-target inference",{"target_space":4,"trials":100})
   r=execute_mission(m)
   from miracle_lab.core.experiment_specs import SPECS
   report=build_report(r,SPECS["remote_information"].measurements)

@@ -1,4 +1,4 @@
-import csv,json,ast
+import csv,json
 from collections import defaultdict
 from pathlib import Path
 from miracle_lab.core.inversion import minimum_modification
@@ -7,7 +7,7 @@ from miracle_lab.core.basis import minimum_basis,singleton_requirements
 rows=list(csv.DictReader(Path("data/synthetic_claim_trials.csv").open(encoding="utf-8"))); mapping={}
 for r in rows:
  if r["world"]!="literal_simulation" or r["experiment"] in mapping: continue
- obs=dict(ast.literal_eval(r["model_outputs"])); m=minimum_modification(r["experiment"],obs)
+ obs=json.loads(r["model_outputs"]); m=minimum_modification(r["experiment"],obs)
  if m: mapping[r["experiment"]]=mechanism_family(m.name)
 result=minimum_basis(singleton_requirements(mapping)); members=defaultdict(list)
 for gx,fam in sorted(mapping.items()): members[fam].append(gx)

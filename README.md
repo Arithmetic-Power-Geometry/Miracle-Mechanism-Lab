@@ -1,14 +1,14 @@
 # Anomalous Capability Simulator (ACS)
 
-ACS is a neutral computational laboratory for translating unusual or extraordinary capability claims into explicit observables, quantitative model consequences, competing explanations, and discriminating experiments.
+ACS is an interactive computational laboratory for turning unusual capability reports into explicit observables, parameterized models, competing explanations, and discriminating tests.
 
-**Scope boundary:** ACS simulates hypotheses. It does not establish that an extraordinary phenomenon exists, and its synthetic datasets are not empirical evidence.
+**Interpretation boundary:** ACS simulates hypotheses and benchmark worlds. It does not establish that an extraordinary phenomenon exists, and synthetic outputs are not empirical evidence.
 
-## Canonical 21-GX architecture
+## 21 experiment missions
 
-The software uses one frozen ontology of 21 generic experiments. Tradition-specific or report-specific terms are examples nested under these generic experiments, not additional experiment classes.
+ACS uses one canonical set of 21 generic experiments. Scenario labels are plain-English navigation aids; they are not additional experiment classes.
 
-| Code | Generic experiment |
+| Code | Experiment |
 |---|---|
 | GX-01 | Scale Decrease |
 | GX-02 | Scale Increase |
@@ -32,58 +32,71 @@ The software uses one frozen ontology of 21 generic experiments. Tradition-speci
 | GX-20 | Anomalous Resilience |
 | GX-21 | Form Transformation |
 
-The canonical path is:
+The architecture is:
 
 ```
-generic ontology
-  -> experiment specifications
+ontology
+  -> experiment specification
   -> typed parameter registry
   -> frozen mission
-  -> validated quantitative engine
+  -> quantitative engine
   -> evidence report
-  -> exact / greedy / adaptive / noisy CTC discrimination
+  -> fixed/adaptive/noisy discrimination analysis
 ```
 
-Parameter type, unit, default and admissible range are defined once in `miracle_lab/core/parameter_specs.py` and used by the Streamlit interface. The quantitative engine independently enforces scientific domain constraints.
+## Game-zone interface
 
-## CTC experimental-design layer
-
-For each GX class, ACS represents a finite set of candidate mechanisms and candidate measurements. The deterministic layer computes an exact minimum-cost separating set and a greedy comparison; an adaptive solver computes an exact minimum worst-case-cost decision tree. The noisy layer uses explicitly synthetic Bernoulli measurement models and reports finite-sample discrimination costs at declared target accuracies.
-
-These benchmarks test algorithms and software behavior. Their costs, probabilities and signatures are synthetic design quantities, not measured properties of extraordinary phenomena.
-
-## Synthetic benchmark
-
-`scripts/generate_dataset.py` produces a deterministic software-validation dataset with:
-
-- 21 GX experiments;
-- three stipulated worlds per experiment: `baseline`, `mimic`, and `literal_simulation`;
-- 100 seeded trials per experiment/world cell;
-- 63 balanced cells;
-- 6,300 rows.
-
-See `DATASET.md` for the schema and interpretation boundary.
-
-## Interactive software
-
-Install and launch:
+Launch the interactive lab:
 
 ```bash
 pip install -r requirements.txt
 streamlit run streamlit_app.py
 ```
 
-The interface follows three stages:
+Every experiment uses the same three-stage game flow:
 
-1. **Mission Briefing** — choose a generic experiment, nested example, and typed parameters.
-2. **Experiment** — freeze the mission and declare which required measurements are observed.
-3. **Evidence Report** — inspect equations, quantitative outputs, competing explanations, CTC discrimination requirements, and unresolved measurement boundaries.
+1. **Mission Briefing** — choose one of 21 experiments, select a neutral scenario, inspect the objective, mathematics, required measurements and alternative explanations, then tune the typed parameter loadout.
+2. **Experiment Zone** — lock the mission, declare which measurements are actually observed, inspect the frozen configuration and execute the model.
+3. **Analysis & Output Zone** — inspect equations, quantitative outputs, competing explanations, exact/greedy/adaptive/noisy discrimination costs, the resolution boundary, and download the result as JSON.
 
-A report can be resolved relative to its declared measurement set without establishing the extraordinary interpretation.
+The interface includes mission progress, completed-run count and a game-zone score. These are interface-progression indicators only and have no scientific meaning.
+
+Each of the 21 experiments also has a deterministic procedural SVG motion motif. The same experiment changes its visual stage semantics from **Brief** (define · parameterize · challenge), through **Run** (observe · perturb · measure), to **Resolve** (compare · separate · bound). These animations are explanatory interface graphics generated from the canonical experiment key; they are not recordings or empirical evidence.
+
+## Experiment specification
+
+Each GX mission defines:
+
+- a distinct observable relation;
+- an explicit mathematical signature;
+- typed parameters with units and admissible ranges;
+- at least three required measurements;
+- at least three ordinary or alternative explanations;
+- a quantitative synthetic execution model;
+- experiment-specific interpretation and boundary statements;
+- a discrimination problem over candidate mechanisms and measurements.
+
+## CTC discrimination layer
+
+For each experiment, ACS represents a finite synthetic set of candidate mechanisms and candidate measurements. The deterministic layer calculates an exact minimum-cost separating set and a greedy comparator. The adaptive layer calculates an exact minimum worst-case-cost decision tree. The noisy layer uses declared synthetic Bernoulli response models to compute finite-sample discrimination costs at target accuracies.
+
+These values benchmark algorithms and software behavior. They are not measured properties of real extraordinary phenomena.
+
+## Synthetic validation dataset
+
+`scripts/generate_dataset.py` produces a deterministic benchmark with:
+
+- 21 experiments;
+- three stipulated worlds per experiment: `baseline`, `mimic`, and `literal_simulation`;
+- 100 seeded trials per experiment/world cell;
+- 63 balanced cells;
+- 6,300 rows.
+
+See `DATASET.md` for the schema and interpretation limits.
 
 ## Reproducibility
 
-Run the test suite and canonical generators:
+Run the canonical checks:
 
 ```bash
 python -m unittest discover -s tests
@@ -96,15 +109,35 @@ python -m scripts.analyze_mechanism_clusters
 python -m scripts.find_minimal_basis
 ```
 
-The CI workflow repeats the principal checks and uploads generated audit artifacts. CTC artifacts include a manifest with SHA-256 hashes.
+Continuous integration repeats the principal software and artifact checks. Generated CTC artifacts include a SHA-256 manifest.
 
-## Interpretation rules
+## Scientific boundaries
 
-Physical units are used only when the modeled quantity has a defined physical unit. Dimensionless scores are explicitly bounded where appropriate, and abstract quantities remain labeled as model units rather than being assigned invented physical meaning. In particular, the local-emergence `E_eq = Δmc²` output is rest-mass-equivalent accounting, not a claim of measured released energy; mass-response experiments do not silently change rest mass; and prediction horizon is a time quantity, not information bits.
+Physical units are used only where the modeled quantity has a defined unit. Dimensionless scores are bounded where appropriate, while abstract quantities remain model quantities rather than being assigned invented physical meaning.
 
-## Research and safety boundary
+Examples:
 
-ACS is computational research software for hypothetical scenarios. It does not adjudicate religious, spiritual, philosophical, or metaphysical truth claims. Descriptive examples do not constitute evidence. The software is not a medical device and must not be used for medical diagnosis or treatment decisions.
+- mass-response experiments do not silently alter rest mass;
+- `E_eq = Δmc²` in the local-emergence model is rest-mass-equivalent accounting, not a measured released-energy claim;
+- future-information horizon is a time quantity;
+- model execution does not identify a unique physical mechanism;
+- a resolved synthetic discrimination set does not establish the extraordinary interpretation.
+
+ACS is not a medical device and must not be used for diagnosis, treatment, or clinical decision-making.
+
+## Repository structure
+
+- `miracle_lab/core/generic_ontology.py` — canonical 21-class ontology and neutral scenarios.
+- `miracle_lab/core/experiment_specs.py` — mathematics, measurements and competing explanations.
+- `miracle_lab/core/parameter_specs.py` — typed parameter registry.
+- `miracle_lab/core/generic_engine.py` — validated quantitative execution engine.
+- `miracle_lab/core/evidence_report.py` — experiment-specific result reports.
+- `miracle_lab/core/motion_geometry.py` — 21 experiment-specific procedural animated geometries across all three stages.
+- `miracle_lab/core/generic_ctc.py` — exact and greedy fixed discrimination benchmark.
+- `miracle_lab/core/ctc_adaptive.py` — deterministic adaptive strategy.
+- `miracle_lab/core/ctc_probabilistic.py` and `noisy_benchmark.py` — finite-sample noisy benchmark.
+- `streamlit_app.py` — primary game-zone interface.
+- `tests/` — regression, architecture, all-21 and interface contracts.
 
 ## License
 
@@ -114,4 +147,4 @@ Licensed under the Apache License, Version 2.0. See `LICENSE`.
 
 ## Citation / attribution
 
-If you use ACS in research, cite the repository and state explicitly that its benchmark datasets and extraordinary-capability outputs are synthetic.
+When using ACS in research, identify the repository/version used and state explicitly that the benchmark datasets and simulated outputs are synthetic.

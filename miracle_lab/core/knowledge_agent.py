@@ -1,8 +1,8 @@
-"""Tradition-neutral claim compiler for the canonical 21-GX ontology.
+"""Neutral claim-description compiler for the canonical 21-GX ontology.
 
-Vocabulary aliases are navigation aids only; classification is not evidence.
-Broad tradition terms remain unclassified unless an observable description is
-also supplied.
+Scenario aliases are navigation aids only; classification is not evidence.
+Unrecognized broad labels remain unclassified unless an observable description
+is also supplied.
 """
 from dataclasses import dataclass
 from miracle_lab.core.experiment_specs import SPECS
@@ -18,8 +18,6 @@ CLAIM_ONTOLOGY=tuple(KnowledgeClaim(
  SPECS[k].discriminators,SPECS[k].measurements) for k in SPECS)
 
 ALIASES=dict(EXAMPLE_MAP)
-for broad in ("iddhi","rddhi","abhijna","siddhi","karama","karamat","miracle"):
- ALIASES[broad]="unclassified"
 
 def claims_for_capability(capability):
  return tuple(c for c in CLAIM_ONTOLOGY if c.capability==capability)
@@ -27,7 +25,7 @@ def claims_for_capability(capability):
 def classify_description(text):
  t=text.lower(); hits=[]
  for term,cap in ALIASES.items():
-  if term in t and cap!="unclassified": hits.append((term,cap))
+  if term in t: hits.append((term,cap))
  for c in CLAIM_ONTOLOGY:
   if c.label in t: hits.append((c.label,c.capability))
  return tuple(dict.fromkeys(hits))

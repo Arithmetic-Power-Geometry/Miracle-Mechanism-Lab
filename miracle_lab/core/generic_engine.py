@@ -71,23 +71,28 @@ def execute(key,params=None):
  elif key=="detection_dropout":
   n=_integer(p["sensor_modalities"],"sensor_modalities"); o={"audited_modalities":n}; eq=("D=(D1,...,Dn)",); note="Sensor dropout is not object disappearance."
  elif key=="multiple_instances":
-  n=_integer(p["instance_count"],"instance_count"); o={"simultaneous_instances":n,"identity_excess":max(0,n-1)}; eq=("X=N_auth-1",); note="Each instance requires independent authentication."
+  n=_integer(p["instance_count"],"instance_count",2); o={"simultaneous_instances":n,"identity_excess":n-1}; eq=("X=N_auth-1",); note="Each instance requires independent authentication."
  elif key=="multi_location_identity":
   d=_positive(p["site_separation"],"site_separation",True); q=_positive(p["clock_tolerance"],"clock_tolerance"); o={"separation_m":d,"clock_tolerance_s":q}; eq=("A≠B","|tA-tB|≤τ"); note="Simultaneity depends on authenticated identity and clock tolerance."
  elif key in ("remote_information","past_information"):
-  k=_integer(p["target_space"],"target_space",2); o={"chance_accuracy":1.0/k}; eq=("p0=1/K",); note="Observed accuracy requires a prespecified statistical test; chance rate alone is not evidence."
+  k=_integer(p["target_space"],"target_space",2); o={"chance_accuracy":1.0/k};
+  if key=="remote_information": o["trials"]=_integer(p["trials"],"trials")
+  else: o["lookback_horizon_s"]=_positive(p["lookback_horizon"],"lookback_horizon",True)
+  eq=("p0=1/K",); note="Observed accuracy requires a prespecified statistical test; chance rate alone is not evidence."
  elif key=="future_information":
-  h=_positive(p["prediction_horizon"],"prediction_horizon",True); n=_positive(p["trials"],"trials"); o={"prediction_horizon_s":h,"trials":n}; eq=("t_response<t_target",); note="Target generation must occur after a committed prediction."
+  h=_positive(p["prediction_horizon"],"prediction_horizon",True); n=_integer(p["trials"],"trials"); o={"prediction_horizon_s":h,"trials":n}; eq=("t_response<t_target",); note="Target generation must occur after a committed prediction."
  elif key=="remote_acquisition":
   d=_positive(p["target_distance"],"target_distance",True); a=_unit_interval(p["channel_audit"],"channel_audit"); o={"target_distance_m":d,"channel_audit":a}; eq=("A_local>0 with audited ordinary channel=0",); note="Access and information transfer are distinct from object transport."
  elif key=="local_emergence":
-  dm=_positive(p["mass_delta"],"mass_delta",True); o={"mass_delta_kg":dm,"rest_mass_equivalent_j":dm*299792458.0**2}; eq=("Δm=m1-m0","E_eq=Δmc²"); note="E_eq is accounting only; it is not measured released energy."
+  dm=_positive(p["mass_delta"],"mass_delta",True); a=_unit_interval(p["boundary_audit"],"boundary_audit"); o={"mass_delta_kg":dm,"rest_mass_equivalent_j":dm*299792458.0**2,"boundary_audit":a}; eq=("Δm=m1-m0","E_eq=Δmc²"); note="E_eq is accounting only; it is not measured released energy."
  elif key in ("external_influence","environmental_influence"):
-  effect=float(p["effect_size"] if key=="external_influence" else p["field_change"]); controls=_integer(p["controls"],"controls"); o={"declared_effect":effect,"control_count":controls}; eq=("ΔY=Y_intervention-Y_control",); note="Causal attribution requires randomized or otherwise justified controls."
+  effect=float(p["effect_size"] if key=="external_influence" else p["field_change"]); controls=_integer(p["controls"],"controls"); o={"declared_effect":effect,"control_count":controls};
+  if key=="external_influence": o["target_distance_m"]=_positive(p["distance"],"distance",True)
+  eq=("ΔY=Y_intervention-Y_control",); note="Causal attribution requires randomized or otherwise justified controls."
  elif key=="accelerated_recovery":
   b=_unit_interval(p["baseline"],"baseline"); y=_unit_interval(p["trajectory"],"trajectory"); c=_unit_interval(p["control"],"control"); o={"test_change":y-b,"control_change":c-b,"difference_in_change":y-c}; eq=("Δr=(Y1-Y0)-(C1-C0)",); note="Endpoint definition, baseline comparability and time course must be prespecified."
  elif key=="revival":
-  t=_positive(p["elapsed_time"],"elapsed_time"); confirm=_unit_interval(p["independent_confirmation"],"independent_confirmation"); o={"elapsed_s":t,"confirmation_score":confirm}; eq=("S(t0)=0→S(t1)=1",); note="The state criterion must be operationally defined; the simulator does not define death."
+  state=_unit_interval(p["state_definition"],"state_definition"); t=_positive(p["elapsed_time"],"elapsed_time"); confirm=_unit_interval(p["independent_confirmation"],"independent_confirmation"); o={"initial_state_code":state,"elapsed_s":t,"confirmation_score":confirm}; eq=("S(t0)=0→S(t1)=1",); note="The state criterion must be operationally defined; the simulator does not define death."
  elif key=="resilience":
   h=float(p["hazard"]); d=_positive(p["dose"],"dose",True); r=float(p["response"]); o={"hazard_level":h,"dose":d,"response":r}; eq=("R=f(hazard,dose,time)",); note="Exposure verification and protection controls are essential."
  elif key=="form_transformation":

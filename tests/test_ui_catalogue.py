@@ -6,7 +6,7 @@ class TestUICatalogue(unittest.TestCase):
   a=audit_ui_catalogue()
   self.assertTrue(all((a["unique_codes"],a["unique_examples"],a["all_have_math"],a["all_have_measurements"],a["all_have_discriminators"])))
  def test_display_is_one_per_experiment(self): self.assertEqual(len(DISPLAY_TO_KEY),21)
- def test_local_emergence_nests_examples(self):
+ def test_local_emergence_uses_neutral_scenarios(self):
   e=UI_EXPERIMENTS["local_emergence"].examples
-  self.assertIn("a sweet appears",e); self.assertIn("an object appears",e); self.assertIn("materialization",e)
+  self.assertIn("sealed-chamber appearance",e); self.assertIn("local object appearance",e)
 if __name__=="__main__": unittest.main()
