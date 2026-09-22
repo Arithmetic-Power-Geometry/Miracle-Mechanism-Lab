@@ -186,7 +186,7 @@ else:
  c3.metric("Resolution","Resolved*" if report.resolution_status!="UNRESOLVED" else "Unresolved")
  st.markdown("### What this result means")
  st.info(report.interpretation)
- st.write("**Plain-language reading:** "+explain["takeaway"])
+ st.write(explain["takeaway"])
  if report.resolution_status=="UNRESOLVED":
   st.write("The current evidence is not enough to separate all declared explanations. That is a valid scientific result, not a failure.")
  else:
