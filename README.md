@@ -61,6 +61,8 @@ Every experiment uses the same three-stage game flow:
 
 The interface includes mission progress, completed-run count and a game-zone score. These are interface-progression indicators only and have no scientific meaning.
 
+Each of the 21 experiments also has a deterministic procedural SVG motion motif. The same experiment changes its visual stage semantics from **Brief** (define · parameterize · challenge), through **Run** (observe · perturb · measure), to **Resolve** (compare · separate · bound). These animations are explanatory interface graphics generated from the canonical experiment key; they are not recordings or empirical evidence.
+
 ## Experiment specification
 
 Each GX mission defines:
@@ -130,6 +132,7 @@ ACS is not a medical device and must not be used for diagnosis, treatment, or cl
 - `miracle_lab/core/parameter_specs.py` — typed parameter registry.
 - `miracle_lab/core/generic_engine.py` — validated quantitative execution engine.
 - `miracle_lab/core/evidence_report.py` — experiment-specific result reports.
+- `miracle_lab/core/motion_geometry.py` — 21 experiment-specific procedural animated geometries across all three stages.
 - `miracle_lab/core/generic_ctc.py` — exact and greedy fixed discrimination benchmark.
 - `miracle_lab/core/ctc_adaptive.py` — deterministic adaptive strategy.
 - `miracle_lab/core/ctc_probabilistic.py` and `noisy_benchmark.py` — finite-sample noisy benchmark.
