@@ -87,7 +87,8 @@ def execute(key,params=None):
   dm=_positive(p["mass_delta"],"mass_delta",True); a=_unit_interval(p["boundary_audit"],"boundary_audit"); o={"mass_delta_kg":dm,"rest_mass_equivalent_j":dm*299792458.0**2,"boundary_audit":a}; eq=("Δm=m1-m0","E_eq=Δmc²"); note="E_eq is accounting only; it is not measured released energy."
  elif key in ("external_influence","environmental_influence"):
   effect=float(p["effect_size"] if key=="external_influence" else p["field_change"]); controls=_integer(p["controls"],"controls"); o={"declared_effect":effect,"control_count":controls};
-  if key=="external_influence": o["target_distance_m"]=_positive(p["distance"],"distance",True) eq=("ΔY=Y_intervention-Y_control",); note="Causal attribution requires randomized or otherwise justified controls."
+  if key=="external_influence": o["target_distance_m"]=_positive(p["distance"],"distance",True)
+  eq=("ΔY=Y_intervention-Y_control",); note="Causal attribution requires randomized or otherwise justified controls."
  elif key=="accelerated_recovery":
   b=_unit_interval(p["baseline"],"baseline"); y=_unit_interval(p["trajectory"],"trajectory"); c=_unit_interval(p["control"],"control"); o={"test_change":y-b,"control_change":c-b,"difference_in_change":y-c}; eq=("Δr=(Y1-Y0)-(C1-C0)",); note="Endpoint definition, baseline comparability and time course must be prespecified."
  elif key=="revival":
