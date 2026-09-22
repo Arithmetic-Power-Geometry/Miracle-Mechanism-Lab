@@ -4,7 +4,7 @@ from miracle_lab.core.experiment_specs import SPECS
 
 MOTIFS={
 "scale_decrease":("◎","Radial contraction","r(t) ↓"),
-      "scale_increase":'<g><rect x="120" y="105" width="110" height="90" rx="8" class="barrier"/><text x="137" y="92" class="muted">START SIZE</text><g transform="translate(175 150)"><rect x="-30" y="-25" width="60" height="50" rx="7" class="object"/><circle cx="-12" cy="-8" r="5" class="detail"/><path d="M-20 15 L-5 0 L8 13 L20 -8" class="wave"/><animateTransform attributeName="transform" type="scale" values="1;2.8;2.8;1" dur="5s" repeatCount="indefinite"/></g><path d="M285 150 H700" class="scan" stroke-dasharray="8 10"/><path d="M660 95 L720 150 L660 205 M720 150 H810" class="wave"/><text x="625" y="78" class="t">SAME OBJECT · LARGER GEOMETRY</text></g>',
+"scale_increase":("◉","Radial expansion","r(t) ↑"),
 "mass_response_decrease":("△","Reduced response","F/m ↓"),
 "mass_response_increase":("▽","Increased response","F/m ↑"),
 "unsupported_motion":("↟","Unsupported trajectory","x(t)"),
@@ -31,7 +31,7 @@ def _scene(key):
     # Every mission uses a different recognizable object and a different motion story.
     scenes={
       "scale_decrease":'<g><rect x="455" y="105" width="90" height="90" rx="10" class="object"/><circle cx="477" cy="128" r="7" class="detail"/><path d="M470 174 L492 148 L515 172 L535 142" class="wave"/><animateTransform attributeName="transform" type="scale" values="1;0.38;1" additive="sum" dur="4s" repeatCount="indefinite"/></g>',
-      "scale_increase":'<g transform="translate(500 150)"><path d="M-48 32 L0 -58 L48 32 Z" class="object"/><rect x="-58" y="32" width="116" height="18" class="barrier"/><animateTransform attributeName="transform" type="scale" values=".38;1.15;.38" dur="4.4s" repeatCount="indefinite"/></g>',
+      "scale_increase":'<g><rect x="110" y="105" width="120" height="90" rx="8" class="barrier"/><text x="118" y="88" class="muted">REFERENCE SIZE</text><g transform="translate(170 150)"><rect x="-28" y="-24" width="56" height="48" rx="7" class="object"/><circle cx="-10" cy="-8" r="5" class="detail"/><path d="M-18 14 L-5 0 L8 12 L19 -8" class="wave"/></g><path d="M270 150 H690" class="scan" stroke-dasharray="8 10"/><g transform="translate(735 150)"><rect x="-28" y="-24" width="56" height="48" rx="7" class="object"/><circle cx="-10" cy="-8" r="5" class="detail"/><path d="M-18 14 L-5 0 L8 12 L19 -8" class="wave"/><animateTransform attributeName="transform" type="scale" values=".55;1.65;1.65;.55" dur="4.8s" repeatCount="indefinite"/></g><text x="610" y="72" class="t">MEASURED GEOMETRY INCREASES</text><path d="M690 110 L725 150 L690 190" class="wave"/></g>',
       "mass_response_decrease":'<g><path d="M500 72 C470 105 470 145 500 175 C530 145 530 105 500 72Z" class="object"><animateTransform attributeName="transform" type="translate" values="0 75;0 -20;0 75" dur="3.6s" repeatCount="indefinite"/></path><path d="M500 210 V90 M488 108 L500 90 L512 108" class="wave"/></g>',
       "mass_response_increase":'<g><path d="M455 112 H545 L565 198 H435Z" class="object"><animateTransform attributeName="transform" type="translate" values="0 -35;0 25;0 -35" dur="3.2s" repeatCount="indefinite"/></path><path d="M500 70 V205 M488 187 L500 205 L512 187" class="wave"/></g>',
       "unsupported_motion":'<g><path d="M160 220 Q500 25 835 100" class="scan"/><path d="M-22 8 L18 0 L-22 -8 L-8 0Z" class="object"><animateMotion dur="4s" repeatCount="indefinite" path="M160 220 Q500 25 835 100" rotate="auto"/></path></g>',
