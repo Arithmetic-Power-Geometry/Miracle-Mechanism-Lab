@@ -9,7 +9,7 @@ This repository uses a deliberately synthetic benchmark to test the ACS inferenc
 - 100 seeded trials per experiment/world cell.
 - 63 balanced cells and 6,300 rows.
 - Fixed deterministic seed family beginning at 20260921.
-- Each row stores the canonical experiment key/code, synthetic target and mimic signals, serialized outputs from the same quantitative execution engine used by the application, and the interpretation boundary.
+- Each row stores the canonical experiment key/code, synthetic target and mimic signals, deterministic JSON outputs from the same quantitative execution engine used by the application, schema version `acs-synthetic-v1`, and the interpretation boundary.
 
 Plain-English scenarios are not dataset classes; they remain nested navigation labels under the 21 generic experiments.
 
