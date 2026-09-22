@@ -1,6 +1,12 @@
 # Anomalous Capability Simulator (ACS)
 
-ACS is an interactive computational laboratory for turning unusual capability reports into explicit observables, parameterized models, competing explanations, and discriminating tests.
+ACS is a public research simulator for turning unusual or difficult-to-interpret reports into explicit measurements, parameterized models, competing explanations, and discriminating tests.
+
+The public-facing idea is simple:
+
+> **Claim → Measure → Compare explanations → Find missing evidence → Conclude only what the evidence permits.**
+
+ACS does not ask users to believe or dismiss a report. It helps them ask a better question: **what would need to be measured to distinguish the plausible explanations?** For example, if an object is reported to appear inside a sealed chamber, ACS asks whether the boundary was intact, whether mass changed, whether provenance is known, and whether hidden transfer or measurement error still fit the observations.
 
 **Interpretation boundary:** ACS simulates hypotheses and benchmark worlds. It does not establish that an extraordinary phenomenon exists, and synthetic outputs are not empirical evidence.
 
@@ -8,29 +14,29 @@ ACS is an interactive computational laboratory for turning unusual capability re
 
 ACS uses one canonical set of 21 generic experiments. Scenario labels are plain-English navigation aids; they are not additional experiment classes.
 
-| Code | Experiment |
-|---|---|
-| GX-01 | Scale Decrease |
-| GX-02 | Scale Increase |
-| GX-03 | Mass-Response Decrease |
-| GX-04 | Mass-Response Increase |
-| GX-05 | Unsupported Motion |
-| GX-06 | Path Discontinuity |
-| GX-07 | Barrier Transit |
-| GX-08 | Detection Dropout |
-| GX-09 | Multiple Instances |
-| GX-10 | Multi-location Identity |
-| GX-11 | Remote Information |
-| GX-12 | Future Information |
-| GX-13 | Past Information |
-| GX-14 | Remote Acquisition |
-| GX-15 | Local Emergence |
-| GX-16 | External Influence |
-| GX-17 | Environmental Influence |
-| GX-18 | Accelerated Recovery |
-| GX-19 | State Revival |
-| GX-20 | Anomalous Resilience |
-| GX-21 | Form Transformation |
+| Code | Experiment | Plain-language question | Why it matters | Required measurements | Typical competing explanations | What a resolved result would mean |
+|---|---|---|---|---|---|---|
+| GX-01 | Scale Decrease | Did measured geometry really become smaller? | Separates actual geometric contraction from camera perspective, substitution and calibration artifacts. | 3-D geometry; mass; identity | perspective; substitution; measurement error | Calibrated geometry and identity evidence are sufficient to separate the declared alternatives. |
+| GX-02 | Scale Increase | Did measured geometry really become larger? | Separates actual enlargement from camera perspective, substitution and scale-reference error. | 3-D geometry; mass; identity | perspective; substitution; measurement error | Calibrated geometry and identity evidence are sufficient to separate the declared alternatives. |
+| GX-03 | Mass-Response Decrease | Did force response actually decrease? | Separates unusual low response from hidden support, buoyancy and airflow. | force; acceleration; support | hidden support; buoyancy; airflow | Observed force-response evidence separates the declared ordinary mechanisms in the synthetic model. |
+| GX-04 | Mass-Response Increase | Did force response actually increase? | Separates unusual high response from anchoring, external fields and instrument error. | force; acceleration; support | anchoring; field force; instrument error | Observed force-response evidence separates the declared ordinary mechanisms in the synthetic model. |
+| GX-05 | Unsupported Motion | Is motion present without an identified support or force channel? | Forces the user to audit ordinary forces before interpreting a trajectory as unsupported. | position; force; environment | support; airflow; electromagnetic force | Position and force evidence separate the declared support-channel alternatives. |
+| GX-06 | Path Discontinuity | Is there a genuine observational gap in an authenticated path? | Prevents endpoint observations from being mistaken for proof of discontinuous travel. | trajectory; time; identity | hidden route; tracking dropout; substitution | Trajectory coverage, timing and identity separate the declared path alternatives. |
+| GX-07 | Barrier Transit | Did the same object cross an intact barrier? | Requires simultaneous evidence about the boundary, path and identity. | barrier integrity; trajectory; identity | opening; occlusion; substitution | The declared opening/occlusion/substitution alternatives are separated by the required evidence. |
+| GX-08 | Detection Dropout | Did detection fail across independent sensors? | Separates broad multimodal dropout from single-sensor failure, camouflage and occlusion. | multimodal detection; position; time | camouflage; occlusion; sensor failure | Independent sensing and timing separate the declared detection alternatives. |
+| GX-09 | Multiple Instances | Are multiple simultaneously authenticated instances present? | Distinguishes true simultaneous authenticated instances from recording, timing and substitution effects. | identity; simultaneity; provenance | substitution; recording; timing error | Authentication, simultaneity and provenance separate the declared duplication alternatives. |
+| GX-10 | Multi-location Identity | Is one authenticated identity present at separated sites at the same time? | Requires independent site authentication and trustworthy simultaneity. | independent authentication; trusted clocks; location | relay; substitution; clock error | Independent site evidence separates relay, substitution and clock-error alternatives. |
+| GX-11 | Remote Information | Do responses contain concealed-target information beyond chance? | Separates apparent remote knowledge from leakage, cueing and random success. | targets; responses; channel audit | leakage; cueing; chance | Concealment, scoring and channel audit separate the declared information alternatives. |
+| GX-12 | Future Information | Was a prediction committed before a later random target existed? | Prevents hindsight, postselection and timestamp problems from masquerading as prediction. | commitment; later RNG target; timestamps | postselection; leakage; timestamp error | Temporal commitment and target-generation evidence separate the declared alternatives. |
+| GX-13 | Past Information | Can a concealed past target be inferred without ordinary access? | Separates retrospective success from memory, cueing and selective sampling. | historical target sampling; response; provenance | ordinary memory; cueing; selection bias | Provenance, concealment and response evidence separate the declared alternatives. |
+| GX-14 | Remote Acquisition | Did local target access occur without a documented transfer channel? | Turns an apparent acquisition into a provenance and transfer-channel audit. | target access; channel; timing | ordinary delivery; hidden channel; cueing | Access, timing and transfer-channel evidence separate the declared alternatives. |
+| GX-15 | Local Emergence | Did inventory appear inside an audited boundary, and how did mass/provenance change? | Separates apparent appearance from hidden transfer, transformation and measurement error. | mass balance; boundary; provenance | hidden transfer; transformation; measurement error | Mass balance, boundary integrity and provenance separate the declared alternatives. |
+| GX-16 | External Influence | Did an intervention change a remote target relative to controls? | Requires a controlled causal comparison rather than a simple before-and-after change. | target outcome; randomization; controls | ordinary force/channel; bias; confounding | Randomized controlled evidence separates the declared causal alternatives. |
+| GX-17 | Environmental Influence | Did an intervention change an environmental variable relative to controls? | Separates intervention-linked change from natural variation, local forcing and selection bias. | environmental field; controls; timing | natural variation; local forcing; selection bias | Controlled environmental evidence separates the declared alternatives. |
+| GX-18 | Accelerated Recovery | Is the recovery trajectory faster than an appropriate comparison? | Replaces dramatic before/after impressions with a repeated controlled trajectory. | baseline; time course; control | regression to mean; treatment; measurement bias | Longitudinal comparison separates the declared recovery alternatives. |
+| GX-19 | State Revival | Did a system move from a predefined state 0 to state 1? | Requires the state definition to be fixed before interpreting the transition. | state criterion; independent confirmation; time | misclassification; resuscitation; record error | Predefined criteria, confirmation and timing separate the declared state-transition alternatives. |
+| GX-20 | Anomalous Resilience | Is the response unusual for a verified hazard exposure? | Prevents weak exposure or protection from being mistaken for unusual resilience. | hazard dose; exposure; response | insufficient exposure; protection; measurement error | Verified dose/exposure and response separate the declared alternatives. |
+| GX-21 | Form Transformation | Did geometry change while identity remained continuous? | Separates form change from costume, substitution and perspective effects. | geometry; identity; continuous observation | costume; substitution; perspective | Geometry and identity continuity separate the declared transformation alternatives. |
 
 The architecture is:
 
@@ -53,15 +59,15 @@ pip install -r requirements.txt
 streamlit run streamlit_app.py
 ```
 
-Every experiment uses the same three-stage game flow:
+Every experiment uses the same three-stage scientific flow, but the explanation, checklist, alternatives, takeaway and animated scene are experiment-specific:
 
-1. **Mission Briefing** — choose one of 21 experiments, select a neutral scenario, inspect the objective, mathematics, required measurements and alternative explanations, then tune the typed parameter loadout.
-2. **Experiment Zone** — lock the mission, declare which measurements are actually observed, inspect the frozen configuration and execute the model.
-3. **Analysis & Output Zone** — inspect equations, quantitative outputs, competing explanations, exact/greedy/adaptive/noisy discrimination costs, the resolution boundary, and download the result as JSON.
+1. **Mission Briefing** — explains in plain language what the selected experiment asks, why it matters, what each required measurement means, what each competing explanation means, the mathematical signature, and the typed model parameters.
+2. **Experiment Zone** — shows exactly what evidence the user is declaring as observed. Each checkbox includes an experiment-specific explanation. Unchecked evidence remains explicitly unresolved.
+3. **Analysis & Output Zone** — explains the result in plain language, lists missing evidence, defines each competing explanation, reports exact/greedy/adaptive/noisy synthetic discrimination quantities, gives the resolution boundary, gives a practical research takeaway, and allows JSON download.
 
 The interface includes mission progress, completed-run count and a game-zone score. These are interface-progression indicators only and have no scientific meaning.
 
-Each of the 21 experiments also has a deterministic procedural SVG motion motif. The same experiment changes its visual stage semantics from **Brief** (define · parameterize · challenge), through **Run** (observe · perturb · measure), to **Resolve** (compare · separate · bound). These animations are explanatory interface graphics generated from the canonical experiment key; they are not recordings or empirical evidence.
+Each of the 21 experiments has its own deterministic procedural SVG scene rather than sharing one generic animation. The same experiment changes its visual stage semantics from **Brief** (define · parameterize · challenge), through **Run** (observe · perturb · measure), to **Resolve** (compare · separate · bound). These animations are explanatory interface graphics generated from the canonical experiment key; they are not recordings or empirical evidence.
 
 ## Experiment specification
 
