@@ -73,6 +73,18 @@ ACS is a public research simulator for turning an unusual report into a **clear 
 *Example:* if an object is reported to appear inside a sealed chamber, ACS asks whether the boundary was intact, whether mass changed, whether the object's provenance is known, and whether hidden transfer or measurement error still fit the observations.
 """)
 st.caption("21 neutral experiment missions · synthetic computational lab · no extraordinary claim is treated as established")
+with st.expander("How ACS helps a researcher",expanded=True):
+ st.markdown("""
+**ACS does not ask you to believe the unbelievable. It asks what you would need to measure to know.**
+
+For every mission, ACS separates four things that are often mixed together:
+1. **What is claimed?**
+2. **What must be measured?**
+3. **What ordinary alternatives could still explain it?**
+4. **What evidence would actually separate those alternatives?**
+
+A result can remain **UNRESOLVED**. That is not a failure; it means the current evidence is still compatible with more than one explanation.
+""")
 progress()
 
 if st.session_state.gx_screen=="briefing":
@@ -89,6 +101,10 @@ if st.session_state.gx_screen=="briefing":
  c1.metric("Required measurements",len(spec.measurements))
  c2.metric("Alternative explanations",len(spec.discriminators))
  c3.metric("Family",spec.family)
+ st.markdown("### What the experiment is really asking")
+ st.write(explain["plain"])
+ st.markdown("### Why this matters")
+ st.write(explain["why"])
  st.markdown("### Mission objective")
  st.info(f"Test the declared observable relation using {', '.join(spec.measurements)} while checking alternatives such as {', '.join(spec.discriminators)}.")
  st.markdown(f"**Mathematical signature:** `{spec.mathematics}`")
@@ -122,14 +138,18 @@ elif st.session_state.gx_screen=="experiment":
  c1,c2=st.columns([1,1])
  with c1:
   st.markdown("### Frozen configuration")
+ st.caption("These are the model settings for this run. They define the simulated case; they are not observations by themselves.")
   st.json(dict(m.parameters))
  with c2:
-  st.markdown("### Mission checklist")
+  st.markdown("### Evidence checklist")
+ st.caption("Only tick evidence that would genuinely be available in a real study or review. Missing evidence stays missing.")
   observed=[]
   for x,desc in zip(spec.measurements,explain["measure"]):
    if st.checkbox(f"Observe · {x}",key=f"obs_{m.code}_{x}",help=desc): observed.append(x)
    st.caption(desc)
   st.caption(f"{len(observed)}/{len(spec.measurements)} required measurements declared observed.")
+ st.markdown("### What happens when you execute")
+ st.write("ACS will compute the selected synthetic model, preserve which evidence you declared as observed, and then compare the remaining explanations. The model output does not automatically prove the claim.")
  st.markdown("### Live lab console")
  st.markdown(f'<div class="gx-console">MODEL: {m.code}<br>SCENARIO: {m.example}<br>OBSERVED: {", ".join(observed) if observed else "none"}<br>STATUS: READY</div>',unsafe_allow_html=True)
  st.warning("Unchecked measurements remain unresolved. The simulator never silently marks a measurement as observed.")
@@ -157,9 +177,14 @@ else:
   st.write("The current evidence is not enough to separate all declared explanations. That is a valid scientific result, not a failure.")
  else:
   st.write("The declared synthetic alternatives are separated by the selected measurements. This is still a model-level result, not proof of an extraordinary real-world mechanism.")
+ st.markdown("### What was measured vs what was modeled")
+ st.write("**Observed in this run:** "+(", ".join(observed) if observed else "none declared"))
+ st.write("**Still missing:** "+(", ".join([x for x in spec.measurements if x not in observed]) or "none"))
  st.markdown("### Mathematics")
  st.code(report.mathematics)
  for e in report.equations: st.code(e)
+ st.markdown("### How to read the numbers")
+ st.write("These outputs are values produced by the selected model and parameters. They describe the simulated case; they are not measurements from nature unless a real study supplies corresponding data.")
  st.markdown("### Quantitative output console")
  st.json(report.outputs)
  st.download_button("⬇ Download this result JSON",json.dumps({
@@ -179,6 +204,8 @@ else:
    st.write(f"• **{x}** — {explain['measure'][idx]}")
  else:
   st.write("All required measurement dimensions were declared observed for this run.")
+ st.markdown("### Why some CTC values can look the same")
+ st.write("In the canonical benchmark, each of the three required measurements is deliberately assigned synthetic costs 1, 2 and 3 and each targets one declared alternative. Therefore exact, greedy and adaptive costs can all equal 6 for many missions. This is a transparent software-validation fixture, not a claim that real experiments have the same cost or difficulty.")
  st.markdown("### CTC strategy console")
  ctc=solve_experiment(m.experiment)
  mechanisms,measurements=ctc["mechanisms"],ctc["measurements"]
@@ -197,6 +224,10 @@ else:
  st.write(f"**Suggested first noisy measurement:** {nxt or 'no admissible measurement'}")
  st.caption("Interpretation: lower synthetic cost means fewer weighted benchmark observations are needed in the declared model; it is not a currency, probability of truth, or real laboratory price.")
  st.caption("CTC/noisy values are synthetic benchmark quantities used to test discrimination algorithms, not empirical effect estimates.")
+ st.markdown("### What would strengthen this result?")
+ for x,desc in zip(spec.measurements,explain["measure"]):
+  status="available" if x in observed else "needed"
+  st.write(f"**{x} — {status.upper()}**: {desc}")
  st.markdown("### Resolution boundary")
  if report.resolution_status=="UNRESOLVED":
   st.warning("UNRESOLVED — missing required measurements: "+", ".join(report.unresolved))
@@ -205,6 +236,11 @@ else:
   st.success("Resolved relative to the declared synthetic measurement set. This does not establish an extraordinary interpretation.")
   reward=20
  st.caption(report.boundary)
+ st.markdown("### Decision summary")
+ if report.resolution_status=="UNRESOLVED":
+  st.write("The evidence currently leaves at least one declared explanation open. The appropriate conclusion is to collect the missing discriminating evidence, not to force a yes/no answer.")
+ else:
+  st.write("The declared alternatives are separated within this synthetic benchmark. A real-world conclusion would still require calibrated empirical data and domain-specific validation.")
  st.markdown("### Research takeaway")
  st.info(explain["takeaway"])
  st.markdown("### How to use this outside the simulator")
