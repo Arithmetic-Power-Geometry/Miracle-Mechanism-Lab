@@ -60,10 +60,23 @@ def experiment_svg(key,stage=1,width=980,height=300):
     spec=SPECS[key]
     symbol,title,equation=MOTIFS[key]
     stage_name,verbs=STAGE_WORDS[stage]
+    palettes={
+      "scale_decrease":("#68e8ff","#8b5cff"),"scale_increase":("#7fffc8","#49a7ff"),
+      "mass_response_decrease":("#ffe66d","#57d9ff"),"mass_response_increase":("#ff9f68","#ff5f7a"),
+      "unsupported_motion":("#6ef2ff","#a56cff"),"path_discontinuity":("#ffdf6e","#ff6fae"),
+      "barrier_transit":("#7afcff","#6c7dff"),"detection_dropout":("#ff78d7","#63dfff"),
+      "multiple_instances":("#82ffb4","#56c8ff"),"multi_location_identity":("#63eaff","#c77dff"),
+      "remote_information":("#ffd76a","#67e8ff"),"future_information":("#ff9ee8","#77d8ff"),
+      "past_information":("#a7a0ff","#62f0d2"),"remote_acquisition":("#ffcf70","#7ee7ff"),
+      "local_emergence":("#8affd1","#b37cff"),"external_influence":("#ff8fa3","#6ee7ff"),
+      "environmental_influence":("#77f4c7","#5ca9ff"),"accelerated_recovery":("#8dff8a","#61d9ff"),
+      "revival":("#ff7676","#ffe875"),"resilience":("#ffc85c","#6fffd8"),
+      "form_transformation":("#d38cff","#65e7ff")}
+    accent,accent2=palettes[key]
     grid="".join(f'<path d="M {x} 25 V 270" />' for x in range(40,width,60))+"".join(f'<path d="M 20 {y} H {width-20}" />' for y in range(30,height,45))
     return f'''<svg viewBox="0 0 {width} {height}" width="100%" role="img" aria-label="{escape(spec.title)} animated experiment scene" xmlns="http://www.w3.org/2000/svg">
-    <defs><radialGradient id="g"><stop offset="0%" stop-color="#fff" stop-opacity=".95"/><stop offset="40%" stop-color="#8ef" stop-opacity=".55"/><stop offset="100%" stop-color="#81f" stop-opacity=".03"/></radialGradient><filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
-    <style>.bg{{fill:#050713}}.grid path{{stroke:#8ef;stroke-opacity:.07;stroke-width:1}}.core{{fill:url(#g);stroke:#bff;stroke-width:2;filter:url(#glow)}}.wave{{fill:none;stroke:#bff;stroke-width:3;filter:url(#glow)}}.scan{{fill:none;stroke:#9cf;stroke-width:2;stroke-opacity:.55}}.axis{{stroke:#789;stroke-width:2}}.barrier{{fill:#4453;stroke:#9cf;stroke-width:2}}.particle{{fill:#fff;filter:url(#glow)}}.ray{{stroke:#9cf;stroke-width:2}}.t{{fill:#eef;font-family:monospace}}.muted{{fill:#9ab;font-family:monospace}}</style>
+    <defs><radialGradient id="g"><stop offset="0%" stop-color="#fff" stop-opacity=".95"/><stop offset="40%" stop-color="{accent}" stop-opacity=".72"/><stop offset="100%" stop-color="{accent2}" stop-opacity=".06"/></radialGradient><filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+    <style>.bg{{fill:#050713}}.grid path{{stroke:#8ef;stroke-opacity:.07;stroke-width:1}}.core{{fill:url(#g);stroke:{accent};stroke-width:2;filter:url(#glow)}}.wave{{fill:none;stroke:{accent};stroke-width:3;filter:url(#glow)}}.scan{{fill:none;stroke:{accent2};stroke-width:2;stroke-opacity:.7}}.axis{{stroke:#789;stroke-width:2}}.barrier{{fill:#4453;stroke:{accent2};stroke-width:2}}.particle{{fill:#fff;filter:url(#glow)}}.ray{{stroke:{accent2};stroke-width:2}}.t{{fill:#eef;font-family:monospace}}.muted{{fill:#9ab;font-family:monospace}}</style>
     <rect width="100%" height="100%" rx="20" class="bg"/><g class="grid">{grid}</g>{_scene(key)}
     <text x="34" y="48" class="t" font-size="22">{escape(spec.code)} · {escape(spec.title)}</text>
     <text x="34" y="78" class="muted" font-size="15">{escape(stage_name)} // {escape(verbs)}</text>

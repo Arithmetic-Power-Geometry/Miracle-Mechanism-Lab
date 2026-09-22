@@ -16,8 +16,19 @@ from miracle_lab.core.motion_geometry import experiment_svg
 st.set_page_config(page_title="ACS Game Zone · 21 Experiment Lab",page_icon="🎮",layout="wide")
 
 st.markdown("""<style>
-.block-container{padding-top:1rem;max-width:1500px}.gx-card{border:1px solid #4443;border-radius:18px;padding:1rem 1.2rem;margin:.35rem 0;background:linear-gradient(135deg,#1111,#8881)}
-.gx-kpi{font-size:1.35rem;font-weight:800}.gx-small{opacity:.75;font-size:.9rem}.gx-stage{letter-spacing:.16em;font-size:.78rem;font-weight:800}.gx-console{font-family:monospace;border-left:4px solid #888;padding:.8rem 1rem;background:#8881}.gx-ok{font-weight:800}
+.stApp{background:radial-gradient(circle at 50% -20%,#16224d 0,#080d22 38%,#030611 100%);color:#eef4ff}
+.block-container{padding-top:1rem;max-width:1500px}
+[data-testid="stHeader"]{background:transparent}
+h1,h2,h3{letter-spacing:.02em;text-shadow:0 0 18px #58d5ff33}
+.gx-hud{border:1px solid #55d8ff66;border-radius:22px;padding:1rem 1.2rem;background:linear-gradient(135deg,#0b1536dd,#101c42aa);box-shadow:0 0 30px #32c8ff18;margin-bottom:.8rem}
+.gx-card{border:1px solid #55d8ff55;border-radius:18px;padding:1rem 1.2rem;margin:.45rem 0;background:linear-gradient(135deg,#0b1536dd,#151d42cc);box-shadow:inset 0 0 22px #7ee7ff0d,0 8px 28px #0006}
+.gx-kpi{font-size:1.35rem;font-weight:800;color:#f4fbff}.gx-small{opacity:.78;font-size:.9rem}.gx-stage{letter-spacing:.18em;font-size:.78rem;font-weight:900;color:#7ee7ff}
+.gx-console{font-family:monospace;border:1px solid #55d8ff44;border-left:4px solid #64e7ff;border-radius:12px;padding:.9rem 1rem;background:#050a18dd}.gx-ok{font-weight:800}
+.gx-badge{display:inline-block;border:1px solid #7ee7ff66;border-radius:999px;padding:.25rem .65rem;margin:.12rem;color:#bcefff;background:#0b1634}
+.gx-mission{font-family:monospace;letter-spacing:.08em;color:#8feaff}
+div[data-testid="stMetric"]{border:1px solid #5ce4ff35;border-radius:15px;padding:.55rem;background:#09132bbb}
+div.stButton>button{border-radius:14px;border:1px solid #65e6ff88;font-weight:800;letter-spacing:.04em;box-shadow:0 0 18px #38d8ff18}
+div[data-testid="stExpander"]{border:1px solid #5ce4ff33;border-radius:14px;background:#071027aa}
 </style>""",unsafe_allow_html=True)
 
 if "gx_screen" not in st.session_state: st.session_state.gx_screen="briefing"
@@ -58,12 +69,15 @@ def public_explanation(key):
 def progress():
  order={"briefing":1,"experiment":2,"results":3}
  n=order.get(st.session_state.gx_screen,1)
+ labels=["01 BRIEF","02 RUN","03 RESOLVE"]
+ badges="".join(f'<span class="gx-badge">{"●" if i==n else "○"} {lab}</span>' for i,lab in enumerate(labels,1))
+ st.markdown(f'<div class="gx-hud"><div class="gx-mission">ACS // RESEARCH MISSION CONTROL</div><div style="margin-top:.5rem">{badges}</div></div>',unsafe_allow_html=True)
  st.progress(n/3,text=f"Mission stage {n}/3")
  a,b=st.columns(2)
  a.metric("Completed runs",st.session_state.gx_runs)
  b.metric("Lab score",st.session_state.gx_score,help="Interface progress score only; not a scientific result.")
 
-st.title("🎮 Anomalous Capability Simulator · Game Zone")
+st.markdown('<div class="gx-hud"><div class="gx-mission">ANOMALOUS CAPABILITY SIMULATOR</div><h1 style="margin:.2rem 0">🎮 ACS // Experiment Quest</h1><div>21 scientific missions · evidence challenges · mechanism separation</div></div>',unsafe_allow_html=True)
 st.markdown("""
 ### What is ACS?
 ACS is a public research simulator for turning an unusual report into a **clear measurement plan**. It does not ask you to believe or reject a claim. Instead, it asks what must be measured, which ordinary alternatives remain possible, what the model computes, and what evidence is still missing.
@@ -88,8 +102,8 @@ A result can remain **UNRESOLVED**. That is not a failure; it means the current 
 progress()
 
 if st.session_state.gx_screen=="briefing":
- st.markdown("## 01 // MISSION BRIEFING")
- st.write("Choose a mission, inspect the observable signature, tune the model, then lock the mission before entering the lab.")
+ st.markdown("## 🛰️ LEVEL 01 // MISSION BRIEFING")
+ st.write("Select one of 21 research missions. Learn the challenge, inspect its evidence map, tune the simulated world, then lock your loadout and enter the experiment arena.")
  choice=st.selectbox("Choose experiment",tuple(DISPLAY_TO_KEY))
  key=DISPLAY_TO_KEY[choice]; spec=UI_EXPERIMENTS[key]; explain=public_explanation(key); example=st.selectbox("Scenario",spec.examples)
  visual(spec,V[key],1)
@@ -108,7 +122,7 @@ if st.session_state.gx_screen=="briefing":
  st.markdown("### Mission objective")
  st.info(f"Test the declared observable relation using {', '.join(spec.measurements)} while checking alternatives such as {', '.join(spec.discriminators)}.")
  st.markdown(f"**Mathematical signature:** `{spec.mathematics}`")
- st.markdown("### Parameter loadout")
+ st.markdown("### 🎛️ Mission loadout")
  params={}
  for ps in PARAMETERS[key]:
   kwargs={"value":int(ps.default) if ps.integer else float(ps.default),"key":f"gx_{key}_{ps.name}","help":ps.description or None}
@@ -117,7 +131,7 @@ if st.session_state.gx_screen=="briefing":
   if ps.step is not None: kwargs["step"]=int(ps.step) if ps.integer else float(ps.step)
   label=ps.label + (f" [{ps.unit}]" if ps.unit else "")
   params[ps.name]=st.number_input(label,**kwargs)
- with st.expander("Measurement plan",expanded=True):
+ with st.expander("🧭 Evidence map",expanded=True):
   for x,desc in zip(spec.measurements,explain["measure"]):
    st.write(f"✅ **{x}** — {desc}")
   st.markdown("**What the competing explanations mean**")
@@ -129,7 +143,7 @@ if st.session_state.gx_screen=="briefing":
 
 elif st.session_state.gx_screen=="experiment":
  m=st.session_state.gx_mission; spec=UI_EXPERIMENTS[m.experiment]; v=V[m.experiment]; explain=public_explanation(m.experiment)
- st.markdown("## 02 // EXPERIMENT ZONE")
+ st.markdown("## 🧪 LEVEL 02 // EXPERIMENT ARENA")
  visual(spec,v,2)
  st.write(f"**Scenario locked:** {m.example}")
  st.info(explain["plain"])
@@ -141,7 +155,7 @@ elif st.session_state.gx_screen=="experiment":
   st.caption("These are the model settings for this run. They define the simulated case; they are not observations by themselves.")
   st.json(dict(m.parameters))
  with c2:
-  st.markdown("### Evidence checklist")
+  st.markdown("### 🎯 Evidence objectives")
   st.caption("Only tick evidence that would genuinely be available in a real study or review. Missing evidence stays missing.")
   observed=[]
   for x,desc in zip(spec.measurements,explain["measure"]):
@@ -150,7 +164,7 @@ elif st.session_state.gx_screen=="experiment":
   st.caption(f"{len(observed)}/{len(spec.measurements)} required measurements declared observed.")
  st.markdown("### What happens when you execute")
  st.write("ACS will compute the selected synthetic model, preserve which evidence you declared as observed, and then compare the remaining explanations. The model output does not automatically prove the claim.")
- st.markdown("### Live lab console")
+ st.markdown("### ⚡ Live experiment console")
  st.markdown(f'<div class="gx-console">MODEL: {m.code}<br>SCENARIO: {m.example}<br>OBSERVED: {", ".join(observed) if observed else "none"}<br>STATUS: READY</div>',unsafe_allow_html=True)
  st.warning("Unchecked measurements remain unresolved. The simulator never silently marks a measurement as observed.")
  b1,b2=st.columns([3,1])
@@ -164,7 +178,7 @@ else:
  m=st.session_state.gx_mission; result=st.session_state.gx_result
  spec=UI_EXPERIMENTS[m.experiment]; explain=public_explanation(m.experiment); observed=st.session_state.get("gx_observed",())
  report=build_report(result,observed)
- st.markdown("## 03 // ANALYSIS & OUTPUT ZONE")
+ st.markdown("## 🧠 LEVEL 03 // EVIDENCE RESOLUTION")
  visual(spec,V[m.experiment],3)
  c1,c2,c3=st.columns(3)
  c1.metric("Observed required",f"{len(observed)}/{len(spec.measurements)}")
@@ -192,7 +206,7 @@ else:
   "observed":list(observed),"outputs":report.outputs,"resolution_status":report.resolution_status,
   "boundary":report.boundary
  },indent=2,default=str),file_name=f"{m.code.lower()}_result.json",mime="application/json")
- st.markdown("### Alternative-explanation challenge")
+ st.markdown("### 👾 Alternative-explanation challenge")
  st.write("These are concrete competing explanations. Each remains possible until the relevant evidence excludes it.")
  for i,x in enumerate(report.alternatives,1):
   st.write(f"**{i}. {x}** — {explain['alts'].get(x,'This declared alternative remains possible until discriminating evidence excludes it.')}")
@@ -206,7 +220,7 @@ else:
   st.write("All required measurement dimensions were declared observed for this run.")
  st.markdown("### Why some CTC values can look the same")
  st.write("In the canonical benchmark, each of the three required measurements is deliberately assigned synthetic costs 1, 2 and 3 and each targets one declared alternative. Therefore exact, greedy and adaptive costs can all equal 6 for many missions. This is a transparent software-validation fixture, not a claim that real experiments have the same cost or difficulty.")
- st.markdown("### CTC strategy console")
+ st.markdown("### 🧩 CTC strategy console")
  ctc=solve_experiment(m.experiment)
  mechanisms,measurements=ctc["mechanisms"],ctc["measurements"]
  adaptive=optimal_adaptive_plan(mechanisms,measurements)
@@ -236,7 +250,7 @@ else:
   st.success("Resolved relative to the declared synthetic measurement set. This does not establish an extraordinary interpretation.")
   reward=20
  st.caption(report.boundary)
- st.markdown("### Decision summary")
+ st.markdown("### 🏁 Mission decision")
  if report.resolution_status=="UNRESOLVED":
   st.write("The evidence currently leaves at least one declared explanation open. The appropriate conclusion is to collect the missing discriminating evidence, not to force a yes/no answer.")
  else:
